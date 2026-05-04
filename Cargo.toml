@@ -1,21 +1,20 @@
-[package]
-name = "coyote-connect"
-version = "0.1.0"
-edition = "2024"
+[workspace]
+resolver = "3"
+members = ["ble", "cli", "core", "socket", "waveform"]
 
-[dependencies]
+[workspace.dependencies]
+coyote-connect-ble = { path = "./ble" }
+coyote-connect-waveform = { path = "./waveform" }
+coyote-connect-core = { path = "./core" }
 btleplug = { version = "0.11", features = ["serde"] }
-log = "0.4.22"
-rand = "0.8.5"
+log = "0.4.29"
+rand = "0.9.2"
 tokio = { version = "1", features = ["full"] }
-uuid = "1.10.0"
+uuid = "1.20.0"
 serde = { version = "1.0", features = ["derive"] }
-# arbitrary-int = { version = "1.2.7", features = ["serde"] }
-deku = "0.18"
-futures-util = "0.3.30"
-tokio-util = "0.7.12"
-thiserror = "1.0.64"
+deku = "0.20"
+futures-util = "0.3.31"
+tokio-util = "0.7.18"
+thiserror = "2.0.18"
 num-traits = "0.2"
-
-[dev-dependencies]
-env_logger = "0.11.5"
+env_logger = "0.11.8"

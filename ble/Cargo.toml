@@ -1,0 +1,20 @@
+[package]
+name = "coyote-connect-ble"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+btleplug = { workspace = true }
+log = { workspace = true }
+rand = { workspace = true }
+tokio = { workspace = true }
+uuid = { workspace = true }
+serde = { workspace = true }
+deku = { workspace = true }
+futures-util = { workspace = true }
+tokio-util = { workspace = true }
+thiserror = { workspace = true }
+num-traits = { workspace = true }
+
+[dev-dependencies]
+env_logger = { workspace = true }
