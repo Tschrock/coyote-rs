@@ -17,6 +17,7 @@
 //! [0x1500]: #0x1500---battery-level-characteristic
 //! [0x1501]: #0x1501---version-characteristic
 //! [0x1502]: #0x1502---bluetooth-mac-characteristic
+//! [0x2A59]: #0x2a59---unknown-characteristic
 //! [0x180C]: #0x180c---pulse-host-characteristic
 //! [0x150A]: #0x150a---device-command-characteristic
 //! [0x150B]: #0x150b---device-notification-characteristic
@@ -27,23 +28,23 @@
 //! 
 //! ## Attribute Table
 //! 
-//! | Service UUID | Service Name               | Characteristic UUID   | Characteristic Name        | Properties           |
-//! |--------------|----------------------------|-----------------------|----------------------------|----------------------|
-//! | [0x1800]     | GAP Service                | [0x2A00]              | Device Name                | Read, Write          |
-//! | [0x1800]     | GAP Service                | [0x2A01]              | Appearance                 | Read                 |
-//! | [0x1800]     | GAP Service                | [0x2A04]              | Peripheral Preferred Connection Parameters | Read |
-//! | [0x1800]     | GAP Service                | [0x2AA6]              | Central Address Resolution | Read                 |
-//! | [0x1801]     | GATT Service               | [0x2A05]              | Service Changed            | Indicate             |
-//! | [0x180A]     | Device Information Service | [0x1500]              | Battery Level              | Read, Notify         |
-//! | [0x180A]     | Device Information Service | [0x1501]              | Version                    | Read                 |
-//! | [0x180A]     | Device Information Service | [0x1502]              | Bluetooth MAC              | Read                 |
-//! | [0x180A]     | Device Information Service | [0x2A59]              | Unknown Characteristic     | Read, Notify         |
-//! | [0x180C]     | Pulse Host Service         | [0x150A]              | Device Command             | Write No Response    |
-//! | [0x180C]     | Pulse Host Service         | [0x150B]              | Device Notification        | Notify               |
-//! | [0x2003]     | Unknown Service            | [0x0007]              | Unknown Characteristic     | Write                |
-//! | [0x2003]     | Unknown Service            | [0x0008]              | Unknown Characteristic     | Read, Notify         |
-//! | [0x2004]     | Unknown Service            | [0x0009]              | Unknown Characteristic     | Read                 |
-//! | [0xFE59]     | Secure DFU Service         | [8ec90003-f315-4f60-9fb8-838830daea50] | Buttonless DFU | Write, Indicate |
+//! | Service UUID | Service Name                         | Characteristic UUID                  | Characteristic Name                                    | Properties           |
+//! |--------------|--------------------------------------|--------------------------------------|--------------------------------------------------------|----------------------|
+//! | 0x1800       | [GAP Service][0x1800]                | 0x2A00                               | [Device Name][0x2A00]                                  | Read, Write          |
+//! | 0x1800       | [GAP Service][0x1800]                | 0x2A01                               | [Appearance][0x2A01]                                   | Read                 |
+//! | 0x1800       | [GAP Service][0x1800]                | 0x2A04                               | [Peripheral Preferred Connection Parameters][0x2A04]   | Read                 |
+//! | 0x1800       | [GAP Service][0x1800]                | 0x2AA6                               | [Central Address Resolution][0x2AA6]                   | Read                 |
+//! | 0x1801       | [GATT Service][0x1801]               | 0x2A05                               | [Service Changed][0x2A05]                              | Indicate             |
+//! | 0x180A       | [Device Information Service][0x180A] | 0x1500                               | [Battery Level][0x1500]                                | Read, Notify         |
+//! | 0x180A       | [Device Information Service][0x180A] | 0x1501                               | [Version][0x1501]                                      | Read                 |
+//! | 0x180A       | [Device Information Service][0x180A] | 0x1502                               | [Bluetooth MAC][0x1502]                                | Read                 |
+//! | 0x180A       | [Device Information Service][0x180A] | 0x2A59                               | [Unknown Characteristic][0x2A59]                       | Read, Notify         |
+//! | 0x180C       | [Pulse Host Service][0x180C]         | 0x150A                               | [Device Command][0x150A]                               | Write No Response    |
+//! | 0x180C       | [Pulse Host Service][0x180C]         | 0x150B                               | [Device Notification][0x150B]                          | Notify               |
+//! | 0x2003       | [Unknown Service][0x2003]            | 0x0007                               | [Unknown Characteristic][0x0007]                       | Write                |
+//! | 0x2003       | [Unknown Service][0x2003]            | 0x0008                               | [Unknown Characteristic][0x0008]                       | Read, Notify         |
+//! | 0x2004       | [Unknown Service][0x2004]            | 0x0009                               | [Unknown Characteristic][0x0009]                       | Read                 |
+//! | 0xFE59       | [Secure DFU Service][0xFE59]         | 8ec90003-f315-4f60-9fb8-838830daea50 | [Buttonless DFU][8ec90003-f315-4f60-9fb8-838830daea50] | Write, Indicate      |
 //!
 //! # 0x1800 - GAP Service
 //! Generic Access Profile service that contains the device name, appearance, and connection parameters.
@@ -72,8 +73,8 @@
 //! | Device          | Default Name  | DFU Name       |
 //! |-----------------|---------------|----------------|
 //! | PawPrint Button | 47L120100     | 47L120100_O3   |
-//! | Coyote 3.0      | 47L121000     | <unknonwn>     |
-//! | Coyote 2.0      | D-LAB ESTIM01 | <unknonwn>     |
+//! | Coyote 3.0      | 47L121000     | (unknown)      |
+//! | Coyote 2.0      | D-LAB ESTIM01 | (unknown)      |
 //! 
 //! 
 //! ### 0x2A01 - Appearance Characteristic
@@ -254,11 +255,13 @@
 //! 
 //! The last four bytes are unknown.
 //! 
+//! ```
 //! |      0      |      1      |      2      |      3      |      4      |      5      |      6      |      7      |      8      |      9      |
 //! +-------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+
 //! | Left Conn   | Right Conn  | Left ?      | Right ?     | Left ?      | Right ?     | ?           | ?           | ?           | ?           |
 //! +-------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+-------------+
-//!  
+//! ```
+//! 
 //! #### Examples
 //! - `0x01 0x01 0x00 0x00 0x00 0x00 0xF4 0xF4 0xF4 0xF4` - Device Idle
 //! - `0x01 0x01 0x00 0x00 0x00 0x00 0xA0 0xA0 0xA0 0xA0` - Device Idle
@@ -277,7 +280,7 @@
 //! Characteristic for sending commands to the device.
 //! 
 //! #### Properties
-//! Write
+//! Write No Response
 //! 
 //! #### Value
 //! Variable length byte array. First byte is the command ID, followed by command-specific data.

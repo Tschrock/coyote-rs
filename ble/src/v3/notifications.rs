@@ -8,42 +8,42 @@
 //! +-----+------+------+------+...>
 //! ```
 //!
-//! | Notification | Length   | Description                                                                         | Data Example         |
-//! |--------------|----------|-------------------------------------------------------------------------------------|----------------------|
-//! | 0x02         | 5 bytes  | Pawprint Paired                                                                     | 0x02 01 01 0a 01     |
-//! | 0x03         | Unknown  | No Pawprint Found                                                                   |                      |
-//! | 0x04         | Unknown  | Unknown                                                                             |                      |
-//! | 0x09         | 2 bytes  | Response to 0x08 command? (dupe body data)                                          | 0x09 01              |
-//! | 0x0C         | Unknown  | Unknown                                                                             |                      |
-//! | 0x0D         | Unknown  | Unknown                                                                             |                      |
-//! | 0x0E         | Unknown  | Unknown                                                                             |                      |
-//! | 0x0F         | Unknown  | Pawprint Connected                                                                  |                      |
-//! | 0x10         | Unknown  | Unknown                                                                             |                      |
-//! | 0x21         | Unknown  | Unknown                                                                             |                      |
-//! | 0x29         | Unknown  | Unknown                                                                             |                      |
-//! | 0x31         | Unknown  | Trigger Condition Set                                                               |                      |
-//! | 0x41         | Unknown  | Unknown                                                                             |                      |
-//! | 0x51         | 4 bytes  | Last byte is same as battery level                                                  | 0x51 00 10 5B        |
-//! | 0x53         | 6 bytes  | Unknown                                                                             | 0x53 00 39 06 2B F8  |
-//! | 0x61         | 4 bytes  | Response to 0x60 command? (dupe body data)                                          | 0x61 01 70 07        |
-//! | 0x70         | Unknown  | Unknown                                                                             |                      |
-//! | 0x99         | Unknown  | Unknown                                                                             |                      |
-//! | 0xA1         | Unknown  | Unknown                                                                             |                      |
-//! | 0xA3         | Unknown  | Unknown                                                                             |                      |
-//! | 0xA4         | Unknown  | Unknown                                                                             |                      |
-//! | 0xAE         | Unknown  | Waveforms Restored                                                                  |                      |
-//! | 0xB1         | 4 bytes  | Returns the channel intensities when they are changed.                              | 0xB1 0F 00 00        |
-//! | 0xBD         | Unknown  | Unknown                                                                             |                      |
-//! | 0xBE         | 6 bytes  | Returns the intensity limits and waveform balance parameters when they are changed. |                      |
-//! | 0xC9         | Unknown  | Unknown                                                                             |                      |
-//! | 0xD1         | Unknown  | Unknown                                                                             |                      |
-//! | 0xE0         | 3 bytes  | Error output message.                                                               | 0xE0 01 00           |
-//! | 0xE2         | Unknown  | Unknown                                                                             |                      |
-//! | 0xED         | Unknown  | Unknown                                                                             |                      |
-//! | 0xF1         | 4 bytes  | Unknown. Might be dupe of 0xB1                                                      | 0xF1 01 00 00        |
-//! | 0xF2         | 20 bytes | Unknown. Rcv'd after 0xBF and 0xFF. Contains trigger action config                  | 0xF2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
-//! | 0xF3         | 20 bytes | Unknown. Rcv'd after 0xBF                                                           | 0xF3 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |
-//! | 0xF4         | 14 bytes | Unknown. Rcv'd after 0xBF                                                           | 0xF4 00 00 FF FF 00 00 00 00 00 00 00 00 00 |
+//! | Notification | Description                                                        |
+//! |--------------|--------------------------------------------------------------------|
+//! | 0x02         | Pawprint Paired                                                    |
+//! | 0x03         | No Pawprint Found                                                  |
+//! | 0x04         | Unknown                                                            |
+//! | 0x09         | Unknown (Response to 0x08 command)                                 |
+//! | 0x0C         | Unknown                                                            |
+//! | 0x0D         | Unknown                                                            |
+//! | 0x0E         | Manual Broadcasting Mode                                           |
+//! | 0x0F         | Pawprint Connected                                                 |
+//! | 0x10         | Accessory Gameplay Response                                        |
+//! | 0x21         | Trigger Action Set                                                 |
+//! | 0x29         | Unknown                                                            |
+//! | 0x31         | Trigger Condition Set                                              |
+//! | 0x41         | Unknown                                                            |
+//! | 0x51         | Unknown (Response to 0x50 command)                                 |
+//! | 0x53         | Unknown                                                            |
+//! | 0x61         | Unknown (Response to 0x60 command)                                 |
+//! | 0x70         | Unknown                                                            |
+//! | 0x99         | Unknown                                                            |
+//! | 0xA1         | Unknown (Response to 0xA0 command - Save waveforms pt1)            |
+//! | 0xA3         | Unknown (Response to 0xA2 command - Save waveforms pt2)            |
+//! | 0xA4         | Might be the error response for 0xA2?                              |
+//! | 0xAE         | Waveforms Restored                                                 |
+//! | 0xB1         | Intensity Changed                                                  |
+//! | 0xBD         | Unknown                                                            |
+//! | 0xBE         | Balance and Limits Changed                                         |
+//! | 0xC9         | Unknown                                                            |
+//! | 0xD1         | Unknown                                                            |
+//! | 0xE0         | Error                                                              |
+//! | 0xE2         | Unknown                                                            |
+//! | 0xED         | Unknown                                                            |
+//! | 0xF1         | Intensity Status                                                   |
+//! | 0xF2         | Trigger Action Config                                              |
+//! | 0xF3         | Trigger Condition Config                                           |
+//! | 0xF4         | Unknown. Rcv'd after 0xBF                                          |
 //!
 
 use deku::{DekuRead, DekuWrite};
@@ -52,11 +52,9 @@ use serde::{Deserialize, Serialize};
 use super::commands::*;
 
 /// ## Notification 0x02 - Pawprint Paired
-/// This notification is a response to the 0x01 command. The app issues the 0x01 command when the user searches for accessories. This notification indicates an accessory was successfully paired with the device.
+/// This notification is a response to the 0x01 command. It indicates an accessory was successfully paired with the device.
 ///
 /// ### Payload
-/// The payload is 4 bytes long. The first byte is the pawprint number, the third byte is the battery level. The second and fourth bytes are unknown, but one of them is a version number.
-///
 /// | Offset | Size | Type | Description     |
 /// |--------|------|------|-----------------|
 /// | 0      | 1    | u8   | Pawprint number |
@@ -72,12 +70,85 @@ pub struct Notification02PawprintPaired {
 }
 
 /// ## Notification 0x03 - No Pawprint Found
-/// This notification is a response to the 0x01 command. The app issues the 0x01 command when the user searches for accessories. This notification indicates an accessory was not found.
+/// This notification is a response to the 0x01 command. It indicates an accessory was not found.
 ///
 /// ### Payload
 /// This notification has no payload.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Notification03NoPawprintFound {}
+
+/// ## Notification 0x04 - Unknown
+/// Unknown
+/// 
+/// ### Payload
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct Notification04Unknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Notification 0x09 - Unknown
+/// Response to the 0x08 command.
+/// 
+/// ### Payload
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct Notification09Unknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Notification 0x0C - Unknown
+/// Unknown
+/// 
+/// ### Payload
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct Notification0CUnknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Notification 0x0D - Unknown
+/// Response to the 0x0D command.
+/// 
+/// ### Payload
+/// Unknown
+/// 
+/// ## Examples
+/// - 00000000000000000000000000000000 - Before pairing - response to 0d command
+/// - fffffffe000000000000000000000002 - When pairing - response to 0dffffffffffffffffffffffffffffffff command
+/// - 7e769b9ffabf00000000000000000502 - on connection after pairing - response to 0d command
+/// - 7e769b9ffabf00000000000000000400 - When unpairing - response to 0d00000000000000000000000000000000 command
+/// - 7e769b9ffabf00000000000000000400 - on connection after unpairing - response to 0d command
+/// 
+/// - 7e769b9ffabf00000000000000000400 - Before pairing
+/// - fffffffefabf00000000000000000402 - After 0dffffffffffffffffffffffffffffffff
+/// - 0c responds with 7e769b9ffabf00000000000000000502
+/// - Data: 7e769b9ffabf00000000000000000502 - on connection after pairing - response to 0d command
+/// 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct Notification0DUnknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Notification 0x0E - Manual Broadcasting Mode
+/// Response to the 0x0E command.
+/// 
+/// > Note: these being 0x0A and 0x0B makes me think it's a bitfield, but I haven't seen any other values yet.
+/// 
+/// ### Payload
+/// - 0x0A - Manual broadcasting mode enabled
+/// - 0x0B - Manual broadcasting mode disabled
+#[repr(u8)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+#[deku(id_type = "u8")]
+pub enum Notification0EManualBroadcastingMode {
+    Enabled = 0x0A,
+    Disabled = 0x0B,
+}
 
 /// ## Notification 0x0F - Pawprint Connected
 /// This notification is sent when a previously paired pawprint is connects to the coyote.
@@ -100,16 +171,84 @@ pub struct Notification0FPawprintConnected {
     pub unknown2: u8,
 }
 
-/// ## Notification 0x31 - Trigger Condition Set
-/// This notification is a response to the 0x30 command. The app issues the 0x30 command when configuring Trigger Conditions.
+/// ## Notification 0x10 - Accessory Gameplay Response
+/// Sent in response to the [0x11 - Start Accessory Gameplay] and [0x12 - Stop Accessory Gameplay] commands.
 ///
-/// The payload is 19 bytes long and is a copy of the data sent in the 0x30 command.
+/// ### Payload
+/// Unknown. The first byte is 0x03 when starting gameplay and 0x01 when stopping gameplay.
+///
+/// ### Examples
+/// - 03bdd8 - Starting response
+/// - 010000 - Stopping response
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct Notification10AccessoryGameplayResponse {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Notification 0x21 - Trigger Action Set
+/// Response to the [0x20 - Set Trigger Action] command.
+///
+/// ### Payload
+/// A copy of the data sent in the 0x20 command. See [Command20SetTriggerAction] for details.
+///
+pub type Notification21TriggerActionSet = Command20SetTriggerAction;
+
+/// ## Notification 0x29 - Unknown
+/// Unknown
+/// 
+/// ### Payload
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct Notification29Unknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Notification 0x31 - Trigger Condition Set
+/// Response to the [0x30 - Set Trigger Condition] command.
+///
+/// ### Payload
+/// A copy of the data sent in the 0x30 command. See [Command30SetTriggerCondition] for details.
 pub type Notification31TriggerConditionSet = Command30SetTriggerCondition;
+
+/// ## Notification 0x41 - Unknown
+/// Unknown
+/// 
+/// ### Payload
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct Notification41Unknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Notification 0x51 - Unknown
+/// Response to the 0x50 command. It is also sent when the battery level changes.
+///
+/// ### Payload
+/// The payload is 4 bytes long. The first byte is the indicator color, the second byte is unknown, and the last byte is the battery level.
+///
+/// | Offset | Size | Type | Description     |
+/// |--------|------|------|-----------------|
+/// | 0      | 1    | u8   | Indicator Color |
+/// | 1      | 1    | u8   | Unknown         |
+/// | 2      | 1    | u8   | Battery level   |
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct Notification51Unknown {
+    pub indicator_color: u8,
+    pub unknown: u8,
+    pub battery_level: u8,
+}
 
 /// ## Notification 0x53 - Unknown
 /// This notification is sent immediately after subscribing to the notification characteristic (0x150B).
 ///
-/// The payload is 5 bytes long. The 1st byte is 0x00 and the remaining 4 bytes are the last 4 bytes of the BT MAC.
+/// ### Payload
+/// | Offset | Size | Type | Description       |
+/// |--------|------|------|-------------------|
+/// | 0      | 1    | u8   | Unknown           |
+/// | 1      | 4    | u8   | Last 4 of BT MAC  |
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Notification53Unknown {
     #[deku(read_all)]
@@ -117,22 +256,85 @@ pub struct Notification53Unknown {
 }
 
 /// ## Notification 0x61 - Unknown
-/// This notification is a response to the 0x60 command. The app issues the 0x60 command when changing a pawprint's shoulder lights or when clearing the trigger params.
+/// Response to the 0x60 command. The app issues the 0x60 command when changing a pawprint's shoulder lights or when clearing the trigger params.
 ///
 /// ### Payload
-/// The payload is 3 bytes long and is a copy of the data sent in the 0x60 command.
+/// A copy of the data sent in the 0x60 command. See [Command60Unknown] for details.
 pub type Notification61Unknown = Command60Unknown;
 
-/// ## Notification 0xAE - WaveformsRestored
-/// This notification is a response to the 0xAF command. The app issues the 0xAF command when factory restoring waveforms.
+/// ## Notification 0x70 - Unknown
+/// Unknown
+/// 
+/// ### Payload
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct Notification70Unknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Notification 0x99 - Unknown
+/// Unknown
+/// 
+/// ## Payload
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct Notification99Unknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Notification 0xA1 - Unknown
+///
+/// This notification is a response to the 0xA0 command.
+///
+/// ### Payload
+///
+/// | Offset | Size | Type | Description     |
+/// |--------|------|------|-----------------|
+/// | 0      | 1    | u8   | Slot number     |
+/// | 1      | 1    | u8   | Unknown         |
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct NotificationA1Unknown {
+    pub slot: u8,
+    pub unknown: u8,
+}
+
+/// ## Notification 0xA3 - Unknown
+///
+/// This notification is a response to the 0xA2 command.
+///
+/// ### Payload
+///
+/// | Offset | Size | Type | Description     |
+/// |--------|------|------|-----------------|
+/// | 0      | 1    | u8   | Slot number     |
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct NotificationA3Unknown {
+    pub slot: u8,
+}
+
+/// ## Notification 0xA4 - Unknown
+/// Unknown
+/// 
+/// ## Payload
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct NotificationA4Unknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Notification 0xAE - Waveforms Restored
+/// Response to the [0xAF - Restore Waveforms] command.
 ///
 /// ### Payload
 /// This notification has no payload.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct NotificationAEWaveformsRestored {}
 
-/// ## Notification 0xB1 - IntensityChanged
-/// This notification is a reply to the 0xB0 command.
+/// ## Notification 0xB1 - Intensity Changed
+/// A reply to the 0xB0 command. Only sent if the b0 command changed the intensity, or if a dial has caused the intensity to change. Note the dials don't directly trigger this, it's only sent when using the b0 command.
 ///
 /// > When the pulse host strength changes, the current strength value will be immediately returned through the B1 message. If the strength change is caused by the B0 command, the sequence number returned in the B1 command will be the same as the sequence number contained in the command that caused the change, otherwise the sequence number is 0.
 ///
@@ -141,21 +343,32 @@ pub struct NotificationAEWaveformsRestored {}
 ///
 /// | Offset | Size | Type | Description                    |
 /// |--------|------|------|--------------------------------|
-/// | 0      | 1    | u8   | Serial number                  |
+/// | 0      | 1    | u8   | Sequence number                |
 /// | 1      | 1    | u8   | Current intensity of channel A |
 /// | 2      | 1    | u8   | Current intensity of channel B |
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct NotificationB1IntensityChanged {
     /// 1 byte, 0 ~ 200
-    pub serial_number: u8,
+    pub sequence_number: u8,
     /// 1 byte, 0 ~ 200
     pub current_intensity_a: u8,
     /// 1 byte, 0 ~ 200
     pub current_intensity_b: u8,
 }
 
-/// ## Notification 0xBE - LimitsChanged
-/// This notification is a reply to [CommandBFSetLimits].
+/// ## Notification 0xBD - Unknown
+/// Unknown
+/// 
+/// ## Payload
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct NotificationBDUnknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Notification 0xBE - Limits Changed
+/// A reply to [CommandBFSetLimits].
 ///
 /// > The BE message returns the current AB channel strength soft upper limit + AB channel waveform frequency balance parameter + AB channel waveform strength balance parameter of the pulse host after the corresponding setting of BF input.
 ///
@@ -170,7 +383,7 @@ pub struct NotificationB1IntensityChanged {
 /// | 3      | 1    | u8   | Channel B waveform frequency balance |
 /// | 4      | 1    | u8   | Channel A waveform intensity balance |
 /// | 5      | 1    | u8   | Channel B waveform intensity balance |
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct NotificationBELimitsChanged {
     /// 2 bytes, 0 ~ 200
     pub limit_a: u8,
@@ -186,19 +399,41 @@ pub struct NotificationBELimitsChanged {
     pub intensity_balance_b: u8,
 }
 
+/// ## Notification 0xC9 - Unknown
+/// Unknown
+/// 
+/// ## Payload
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct NotificationC9Unknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Notification 0xD1 - Unknown
+/// Unknown
+/// 
+/// ## Payload
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct NotificationD1Unknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
 /// ## Notification 0xE0 - Error
 /// This notification is sent when an error occurs during command processing.
-/// 
+///
 /// ### Payload
 /// The payload is 2 bytes long.
-/// 
+///
 /// | Offset | Size | Type | Description |
 /// |--------|------|------|-------------|
 /// | 0      | 1    | u8   | Command     |
 /// | 1      | 1    | u8   | Error code  |
 ///
 /// ### Error Codes
-/// 
+///
 /// | Code | Description                                            |
 /// |------|--------------------------------------------------------|
 /// | 0x01 | The command type is not understood                     |
@@ -208,12 +443,12 @@ pub struct NotificationBELimitsChanged {
 /// | 0x05 | Writing to flash failed                                |
 /// | 0x06 | Command queue is full                                  |
 /// | 0x07 | UNKNOWN                                                |
-/// 
+///
 /// ### Example
 /// ```
 /// 0xE0 0x03 0x01
 /// ```
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct NotificationE0Error {
     /// 1 byte, Command
     pub command: u8,
@@ -221,44 +456,60 @@ pub struct NotificationE0Error {
     pub error_code: u8,
 }
 
-/// ## Notification 0xF1 - Unknown
+/// ## Notification 0xE2 - Unknown
+/// Unknown
+/// 
+/// ## Payload
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct NotificationE2Unknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Notification 0xED - Unknown
+/// Unknown
+/// 
+/// ## Payload
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct NotificationEDUnknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Notification 0xF1 - Intensity Status
+/// Received after sending the 0xFF command.
 ///
-/// This notification is recieved after sending the 0xFF command. The app issues the 0xFF command as part of the initial connection.
-///
+/// ### Payload
 /// The payload is 3 bytes long, and appears to be identical to the 0xB1 notification.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
-pub struct NotificationF1Unknown {
-    #[deku(read_all)]
-    pub data: Vec<u8>,
-}
+///
+/// | Offset | Size | Type | Description                    |
+/// |--------|------|------|--------------------------------|
+/// | 0      | 1    | u8   | Sequence number                |
+/// | 1      | 1    | u8   | Current intensity of channel A |
+/// | 2      | 1    | u8   | Current intensity of channel B |
+pub type NotificationF1Unknown = NotificationB1IntensityChanged;
 
-/// ## Notification 0xF2 - Unknown
+/// ## Notification 0xF2 - Trigger Action Config
+/// Received after sending the 0xFF command. It is repeated for each configured Trigger Action.
 ///
-/// This notification is recieved after sending the 0xFF command.
-///
-/// The payload is 19 bytes long. Unknown contents.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
-pub struct NotificationF2Unknown {
-    #[deku(read_all)]
-    pub data: Vec<u8>,
-}
+/// ### Payload
+/// The payload is one of the currently configured trigger actions. See [Command20SetTriggerAction] for details.
+pub type NotificationF2TriggerActionConfig = Command20SetTriggerAction;
 
-/// ## Notification 0xF3 - Unknown
+/// ## Notification 0xF3 - Trigger Condition Config
+/// Received after sending the 0xFF command. It is repeated for each configured Trigger Condition.
 ///
-/// This notification is recieved after sending the 0xFF command.
-///
-/// The payload is 19 bytes long. Unknown contents.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
-pub struct NotificationF3Unknown {
-    #[deku(read_all)]
-    pub data: Vec<u8>,
-}
+/// ### Payload
+/// The payload is one of the currently configured trigger conditions. See [Command30SetTriggerCondition] for details.
+pub type NotificationF3TriggerConditionConfig = Command30SetTriggerCondition;
 
 /// ## Notification 0xF4 - Unknown
+/// Received after sending the 0xFF command.
 ///
-/// This notification is recieved after sending the 0xFF command.
-///
-/// The payload is 13 bytes long. Unknown contents.
+/// ### Payload
+/// Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct NotificationF4Unknown {
     #[deku(read_all)]
@@ -271,4 +522,79 @@ pub struct UnknownNotification {
     pub notification_id: u8,
     #[deku(read_all)]
     pub data: Vec<u8>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+#[deku(id_type = "u8")]
+pub enum Notification {
+    #[deku(id = "0x02")]
+    PawprintPaired(Notification02PawprintPaired),
+    #[deku(id = "0x03")]
+    NoPawprintFound(Notification03NoPawprintFound),
+    #[deku(id = "0x04")]
+    Unknown04(Notification04Unknown),
+    #[deku(id = "0x09")]
+    Unknown09(Notification09Unknown),
+    #[deku(id = "0x0C")]
+    Unknown0C(Notification0CUnknown),
+    #[deku(id = "0x0D")]
+    Unknown0D(Notification0DUnknown),
+    #[deku(id = "0x0E")]
+    ManualBroadcastingMode(Notification0EManualBroadcastingMode),
+    #[deku(id = "0x0F")]
+    PawprintConnected(Notification0FPawprintConnected),
+    #[deku(id = "0x10")]
+    AccessoryGameplayResponse(Notification10AccessoryGameplayResponse),
+    #[deku(id = "0x21")]
+    TriggerActionSet(Notification21TriggerActionSet),
+    #[deku(id = "0x29")]
+    Unknown29(Notification29Unknown),
+    #[deku(id = "0x31")]
+    TriggerConditionSet(Notification31TriggerConditionSet),
+    #[deku(id = "0x41")]
+    Unknown41(Notification41Unknown),
+    #[deku(id = "0x51")]
+    Unknown51(Notification51Unknown),
+    #[deku(id = "0x53")]
+    Unknown53(Notification53Unknown),
+    #[deku(id = "0x61")]
+    Unknown61(Notification61Unknown),
+    #[deku(id = "0x70")]
+    Unknown70(Notification70Unknown),
+    #[deku(id = "0x99")]
+    Unknown99(Notification99Unknown),
+    #[deku(id = "0xA1")]
+    UnknownA1(NotificationA1Unknown),
+    #[deku(id = "0xA3")]
+    UnknownA3(NotificationA3Unknown),
+    #[deku(id = "0xA4")]
+    UnknownA4(NotificationA4Unknown),
+    #[deku(id = "0xAE")]
+    WaveformsRestored(NotificationAEWaveformsRestored),
+    #[deku(id = "0xB1")]
+    IntensityChanged(NotificationB1IntensityChanged),
+    #[deku(id = "0xBD")]
+    UnknownBD(NotificationBDUnknown),
+    #[deku(id = "0xBE")]
+    LimitsChanged(NotificationBELimitsChanged),
+    #[deku(id = "0xC9")]
+    UnknownC9(NotificationC9Unknown),
+    #[deku(id = "0xD1")]
+    UnknownD1(NotificationD1Unknown),
+    #[deku(id = "0xE0")]
+    CommandError(NotificationE0Error),
+    #[deku(id = "0xE2")]
+    UnknownE2(NotificationE2Unknown),
+    #[deku(id = "0xED")]
+    UnknownED(NotificationEDUnknown),
+    #[deku(id = "0xF1")]
+    IntensityStatus(NotificationF1Unknown),
+    #[deku(id = "0xF2")]
+    TriggerActionConfig(NotificationF2TriggerActionConfig),
+    #[deku(id = "0xF3")]
+    TriggerConditionConfig(NotificationF3TriggerConditionConfig),
+    #[deku(id = "0xF4")]
+    UnknownF4(NotificationF4Unknown),
+    #[deku(id_pat = "_")]
+    UnknownNotification(u8, UnknownCommand),
 }
