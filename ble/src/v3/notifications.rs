@@ -13,7 +13,7 @@
 //! | 0x02         | Pawprint Paired                                                    |
 //! | 0x03         | No Pawprint Found                                                  |
 //! | 0x04         | Unknown                                                            |
-//! | 0x09         | Unknown (Response to 0x08 command)                                 |
+//! | 0x09         | Pawprint Unpaired                                                  |
 //! | 0x0C         | Unknown                                                            |
 //! | 0x0D         | Unknown                                                            |
 //! | 0x0E         | Manual Broadcasting Mode                                           |
@@ -49,10 +49,12 @@
 use deku::{DekuRead, DekuWrite};
 use serde::{Deserialize, Serialize};
 
+use crate::v3::common::Color;
+
 use super::commands::*;
 
 /// ## Notification 0x02 - Pawprint Paired
-/// This notification is a response to the 0x01 command. It indicates an accessory was successfully paired with the device.
+/// This notification is a response to the [0x01 - Pair Pawprint] command. It indicates an accessory was successfully paired with the device.
 ///
 /// ### Payload
 /// | Offset | Size | Type | Description     |
@@ -61,6 +63,8 @@ use super::commands::*;
 /// | 1      | 1    | u8   | Unknown         |
 /// | 2      | 1    | u8   | Battery level   |
 /// | 3      | 1    | u8   | Unknown         |
+/// 
+/// [0x01 - Pair Pawprint]: crate::v3::commands::Command01PairPawprint
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Notification02PawprintPaired {
     pub pawprint_number: u8,
@@ -70,10 +74,12 @@ pub struct Notification02PawprintPaired {
 }
 
 /// ## Notification 0x03 - No Pawprint Found
-/// This notification is a response to the 0x01 command. It indicates an accessory was not found.
+/// This notification is a response to the [0x01 - Pair Pawprint] command. It indicates an accessory was not found.
 ///
 /// ### Payload
 /// This notification has no payload.
+/// 
+/// [0x01 - Pair Pawprint]: crate::v3::commands::Command01PairPawprint
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Notification03NoPawprintFound {}
 
@@ -88,15 +94,16 @@ pub struct Notification04Unknown {
     pub data: Vec<u8>,
 }
 
-/// ## Notification 0x09 - Unknown
-/// Response to the 0x08 command.
+/// ## Notification 0x09 - Pawprint Unpaired
+/// Response to the [0x08 - Unpair Pawprint] command.
 /// 
 /// ### Payload
-/// Unknown
+/// Same as [0x08 - Unpair Pawprint].
+/// 
+/// [0x08 - Unpair Pawprint]: crate::v3::commands::Command08UnpairPawprint
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
-pub struct Notification09Unknown {
-    #[deku(read_all)]
-    pub data: Vec<u8>,
+pub struct Notification09PawprintUnpaired {
+    pub pawprint_number: u8,
 }
 
 /// ## Notification 0x0C - Unknown
@@ -111,7 +118,7 @@ pub struct Notification0CUnknown {
 }
 
 /// ## Notification 0x0D - Unknown
-/// Response to the 0x0D command.
+/// Response to the [0x0D - Unknown] command.
 /// 
 /// ### Payload
 /// Unknown
@@ -128,6 +135,7 @@ pub struct Notification0CUnknown {
 /// - 0c responds with 7e769b9ffabf00000000000000000502
 /// - Data: 7e769b9ffabf00000000000000000502 - on connection after pairing - response to 0d command
 /// 
+/// [0x0D - Unknown]: crate::v3::commands::Command0DUnknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Notification0DUnknown {
     #[deku(read_all)]
@@ -135,13 +143,15 @@ pub struct Notification0DUnknown {
 }
 
 /// ## Notification 0x0E - Manual Broadcasting Mode
-/// Response to the 0x0E command.
+/// Response to the [0x0E - Manual Broadcasting Mode] command.
 /// 
 /// > Note: these being 0x0A and 0x0B makes me think it's a bitfield, but I haven't seen any other values yet.
 /// 
 /// ### Payload
-/// - 0x0A - Manual broadcasting mode enabled
-/// - 0x0B - Manual broadcasting mode disabled
+/// - `0x0A` - Manual broadcasting mode enabled
+/// - `0x0B` - Manual broadcasting mode disabled
+/// 
+/// [0x0E - Manual Broadcasting Mode]: crate::v3::commands::Command0EManualBroadcastingMode
 #[repr(u8)]
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 #[deku(id_type = "u8")]
@@ -224,19 +234,24 @@ pub struct Notification41Unknown {
 }
 
 /// ## Notification 0x51 - Unknown
-/// Response to the 0x50 command. It is also sent when the battery level changes.
+/// Response to the [0x50 - Unknown] command. It is also sent when the battery level changes.
 ///
 /// ### Payload
-/// The payload is 4 bytes long. The first byte is the indicator color, the second byte is unknown, and the last byte is the battery level.
-///
 /// | Offset | Size | Type | Description     |
 /// |--------|------|------|-----------------|
 /// | 0      | 1    | u8   | Indicator Color |
 /// | 1      | 1    | u8   | Unknown         |
 /// | 2      | 1    | u8   | Battery level   |
+/// 
+/// See [Color] for possible indicator color values.
+/// 
+/// ### Examples
+/// - `03 10 41` - Indicator color 3, unknown, battery 65%
+/// 
+/// [0x50 - Unknown]: crate::v3::commands::Command50Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Notification51Unknown {
-    pub indicator_color: u8,
+    pub indicator_color: Color,
     pub unknown: u8,
     pub battery_level: u8,
 }
@@ -256,17 +271,41 @@ pub struct Notification53Unknown {
 }
 
 /// ## Notification 0x61 - Unknown
-/// Response to the 0x60 command. The app issues the 0x60 command when changing a pawprint's shoulder lights or when clearing the trigger params.
+/// Response to the [0x60 - Accessory Command] command.
 ///
 /// ### Payload
-/// A copy of the data sent in the 0x60 command. See [Command60Unknown] for details.
-pub type Notification61Unknown = Command60Unknown;
+/// A copy of the data sent in the [0x60 - Accessory Command] command.
+/// 
+/// [0x60 - Accessory Command]: crate::v3::commands::Command60AccessoryCommand
+pub type Notification61Unknown = Command60AccessoryCommand;
 
-/// ## Notification 0x70 - Unknown
-/// Unknown
+/// ## Notification 0x70 - Angle Threshold Detected
+/// Sent once angle thresholds have been detected. Detection can be started with the angle detection [0x60 - Accessory Command].
 /// 
 /// ### Payload
-/// Unknown
+/// | Offset | Size | Type | Description                        |
+/// |--------|------|------|------------------------------------|
+/// | 0      | 1    | u8   | Pawprint number                    |
+/// | 1      | 1    | u8   | 0x61 (response to 0x60 subcommand) |
+/// | 2      | 2    | i16  | X minimum angle in degrees         |
+/// | 4      | 2    | i16  | X maximum angle in degrees         |
+/// | 6      | 2    | i16  | Y minimum angle in degrees         |
+/// | 8      | 2    | i16  | Y maximum angle in degrees         |
+/// | 10     | 2    | i16  | Z minimum angle in degrees         |
+/// | 12     | 2    | i16  | Z maximum angle in degrees         |
+///
+/// ### Examples
+/// ```
+/// 70 01 61 fff5 0040 ffd6 0014 0065 007d
+/// ```
+/// - Pawprint number: 1
+/// - X: -11 to 64
+/// - Y: -42 to 20
+/// - Z: 101 to 125
+/// 
+/// > Note: The sliders in the app go by 2s so only even numbers show up there.
+/// 
+/// [0x60 - Accessory Command]: crate::v3::commands::Command60AccessoryCommand
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Notification70Unknown {
     #[deku(read_all)]
@@ -400,7 +439,7 @@ pub struct NotificationBELimitsChanged {
 }
 
 /// ## Notification 0xC9 - Unknown
-/// Unknown
+/// Unknown. Old strength header?
 /// 
 /// ## Payload
 /// Unknown
@@ -534,7 +573,7 @@ pub enum Notification {
     #[deku(id = "0x04")]
     Unknown04(Notification04Unknown),
     #[deku(id = "0x09")]
-    Unknown09(Notification09Unknown),
+    PawprintUnpaired(Notification09PawprintUnpaired),
     #[deku(id = "0x0C")]
     Unknown0C(Notification0CUnknown),
     #[deku(id = "0x0D")]
