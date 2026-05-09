@@ -1,0 +1,11 @@
+[package]
+name = "coyote-research-toolkit"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+tokio = { workspace = true }
+coyote-connect-ble = { workspace = true }
+bluer = { version = "0.17.4", features = ["bluetoothd", "serde"] }
+clap = { version = "4", features = ["derive"] }
+futures = "0.3.32"

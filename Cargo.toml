@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["ble", "cli", "core", "socket", "waveform"]
+members = ["ble", "cli", "core", "socket", "toolkit", "waveform"]
 
 [workspace.dependencies]
 coyote-connect-ble = { path = "./ble" }
