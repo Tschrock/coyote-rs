@@ -8,43 +8,43 @@
 //! +-----+------+------+------+...>
 //! ```
 //!
-//! | Notification | Description                                                        |
-//! |--------------|--------------------------------------------------------------------|
-//! | 0x02         | Pawprint Paired                                                    |
-//! | 0x03         | No Pawprint Found                                                  |
-//! | 0x04         | Unknown                                                            |
-//! | 0x09         | Pawprint Unpaired                                                  |
-//! | 0x0C         | Unknown                                                            |
-//! | 0x0D         | Unknown                                                            |
-//! | 0x0E         | Manual Broadcasting Mode                                           |
-//! | 0x0F         | Pawprint Connected                                                 |
-//! | 0x10         | Accessory Gameplay Response                                        |
-//! | 0x21         | Trigger Action Set                                                 |
-//! | 0x29         | Unknown                                                            |
-//! | 0x31         | Trigger Condition Set                                              |
-//! | 0x41         | Unknown                                                            |
-//! | 0x51         | Unknown (Response to 0x50 command)                                 |
-//! | 0x53         | Unknown                                                            |
-//! | 0x61         | Unknown (Response to 0x60 command)                                 |
-//! | 0x70         | Unknown                                                            |
-//! | 0x99         | Unknown                                                            |
-//! | 0xA1         | Unknown (Response to 0xA0 command - Save waveforms pt1)            |
-//! | 0xA3         | Unknown (Response to 0xA2 command - Save waveforms pt2)            |
-//! | 0xA4         | Might be the error response for 0xA2?                              |
-//! | 0xAE         | Waveforms Restored                                                 |
-//! | 0xB1         | Intensity Changed                                                  |
-//! | 0xBD         | Unknown                                                            |
-//! | 0xBE         | Balance and Limits Changed                                         |
-//! | 0xC9         | Unknown                                                            |
-//! | 0xD1         | Unknown                                                            |
-//! | 0xE0         | Error                                                              |
-//! | 0xE2         | Unknown                                                            |
-//! | 0xED         | Unknown                                                            |
-//! | 0xF1         | Intensity Status                                                   |
-//! | 0xF2         | Trigger Action Config                                              |
-//! | 0xF3         | Trigger Condition Config                                           |
-//! | 0xF4         | Unknown. Rcv'd after 0xBF                                          |
-//!
+//! | Notification                                    | Description                           |
+//! |-------------------------------------------------|---------------------------------------|
+//! | [0x02](Notification02PawprintPaired)            | Pawprint Paired                       |
+//! | [0x03](Notification03NoPawprintFound)           | No Pawprint Found                     |
+//! | [0x04](Notification04Unknown)                   | Unknown                               |
+//! | [0x09](Notification09PawprintUnpaired)          | Pawprint Unpaired                     |
+//! | [0x0C](Notification0CUnknown)                   | Unknown                               |
+//! | [0x0D](Notification0DUnknown)                   | Unknown                               |
+//! | [0x0E](Notification0EManualBroadcastingMode)    | Manual Broadcasting Mode              |
+//! | [0x0F](Notification0FPawprintConnected)         | Pawprint Connected                    |
+//! | [0x10](Notification10AccessoryGameplayResponse) | Accessory Gameplay Response           |
+//! | [0x21](Notification21TriggerActionSet)          | Trigger Action Set                    |
+//! | [0x29](Notification29Unknown)                   | Unknown                               |
+//! | [0x31](Notification31TriggerConditionSet)       | Trigger Condition Set                 |
+//! | [0x41](Notification41Unknown)                   | Unknown                               |
+//! | [0x51](Notification51Unknown)                   | Unknown (Response to 0x50 command)    |
+//! | [0x53](Notification53Unknown)                   | Unknown                               |
+//! | [0x61](Notification61Unknown)                   | Unknown (Response to 0x60 command)    |
+//! | [0x70](Notification70Unknown)                   | Unknown                               |
+//! | [0x99](Notification99Unknown)                   | Unknown                               |
+//! | [0xA1](NotificationA1Unknown)                   | Unknown (Response to 0xA0 command)    |
+//! | [0xA3](NotificationA3Unknown)                   | Unknown (Response to 0xA2 command)    |
+//! | [0xA4](NotificationA4Unknown)                   | Might be the error response for 0xA2? |
+//! | [0xAE](NotificationAEWaveformsRestored)         | Waveforms Restored                    |
+//! | [0xB1](NotificationB1IntensityChanged)          | Intensity Changed                     |
+//! | [0xBD](NotificationBDUnknown)                   | Unknown                               |
+//! | [0xBE](NotificationBELimitsChanged)             | Balance and Limits Changed            |
+//! | [0xC9](NotificationC9Unknown)                   | Unknown                               |
+//! | [0xD1](NotificationD1Unknown)                   | Unknown                               |
+//! | [0xE0](NotificationE0Error)                     | Error                                 |
+//! | [0xE2](NotificationE2Unknown)                   | Unknown                               |
+//! | [0xED](NotificationEDUnknown)                   | Unknown                               |
+//! | [0xF1](NotificationF1Unknown)                   | Intensity Status                      |
+//! | [0xF2](NotificationF2TriggerActionConfig)       | Trigger Action Config                 |
+//! | [0xF3](NotificationF3TriggerConditionConfig)    | Trigger Condition Config              |
+//! | [0xF4](NotificationF4Unknown)                   | Unknown. Rcv'd after 0xBF             |
+
 
 use deku::{DekuRead, DekuWrite};
 use serde::{Deserialize, Serialize};
@@ -510,9 +510,17 @@ pub struct NotificationE2Unknown {
 /// Unknown
 /// 
 /// ## Payload
-/// Unknown
+/// ```
+/// Data: 09 03 0d17099428c16d9bd4 4b35333762313639
+/// ```
+/// - Version: 0x09
+/// - Label: 0x03
+/// - Build Info?: 4b35333762313639 = "K537b169"
+/// 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct NotificationEDUnknown {
+    version: u8,
+    label: u8,
     #[deku(read_all)]
     pub data: Vec<u8>,
 }

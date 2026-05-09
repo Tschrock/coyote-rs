@@ -10,58 +10,48 @@
 //!
 //! ## Device Commands
 //!
-//! | Command | Description                                               |
-//! |---------|-----------------------------------------------------------|
-//! | [0x01]  | Pair Pawprint                                             |
-//! | [0x08]  | Unpair Pawprint                                           |
-//! | [0x0E]  | Manual Broadcasting Mode                                  |
-//! | [0x0C]  | Unknown                                                   |
-//! | [0x0D]  | Unknown                                                   |
-//! | [0x11]  | Start Accessory Gameplay                                  |
-//! | [0x12]  | Stop Accessory Gameplay                                   |
-//! | [0x20]  | Set Trigger Action                                        |
-//! | [0x28]  | Delete Trigger Action                                     |
-//! | [0x30]  | Set Trigger Condition                                     |
-//! | [0x40]  | Update Accessory Settings                                 |
-//! | [0x50]  | Unknown - Device Indicator Color                          |
-//! | [0x60]  | Set color or clear trigger parameters.                    |
-//! | [0xA0]  | Unknown                                                   |
-//! | [0xA2]  | Unknown                                                   |
-//! | [0xAF]  | Restore Waveforms                                         |
-//! | [0xB0]  | Set Intensity and Waveform Data                           |
-//! | [0xBC]  | Unknown                                                   |
-//! | [0xBF]  | Set Balance and Limits                                    |
-//! | [0xFE]  | Clear Accessory Data                                      |
-//! | [0xFF]  | Get All Accessory Data                                    |
-//!
-//! [0x01]: crate::v3::commands::Command01PairPawprint
-//! [0x08]: crate::v3::commands::Command08UnpairPawprint
-//! [0x0E]: crate::v3::commands::Command0EManualBroadcastingMode
-//! [0x0C]: crate::v3::commands::Command0CUnknown
-//! [0x0D]: crate::v3::commands::Command0DUnknown
-//! [0x11]: crate::v3::commands::Command11StartAccessoryGameplay
-//! [0x12]: crate::v3::commands::Command12StopAccessoryGameplay
-//! [0x20]: crate::v3::commands::Command20SetTriggerAction
-//! [0x28]: crate::v3::commands::Command28DeleteTriggerAction
-//! [0x30]: crate::v3::commands::Command30SetTriggerCondition
-//! [0x40]: crate::v3::commands::Command40UpdateAccessorySettings
-//! [0x50]: crate::v3::commands::Command50Unknown
-//! [0x60]: crate::v3::commands::Command60AccessoryCommand
-//! [0xA0]: crate::v3::commands::CommandA0Unknown
-//! [0xA2]: crate::v3::commands::CommandA2Unknown
-//! [0xAF]: crate::v3::commands::CommandAFRestoreWaveforms
-//! [0xB0]: crate::v3::commands::CommandB0SetIntensity
-//! [0xBC]: crate::v3::commands::CommandBCUnknown
-//! [0xBF]: crate::v3::commands::CommandBFSetLimits
-//! [0xFE]: crate::v3::commands::CommandFEClearAccessoryData
-//! [0xFF]: crate::v3::commands::CommandFFGetAllAccessoryData
-//!
+//! | Command                                    | Description                            |
+//! |--------------------------------------------|----------------------------------------|
+//! | [0x01](Command01PairPawprint)              | Pair Pawprint                          |
+//! | [0x08](Command08UnpairPawprint)            | Unpair Pawprint                        |
+//! | [0x0C](Command0CUnknown)                   | Unknown                                |
+//! | [0x0D](Command0DUnknown)                   | Unknown                                |
+//! | [0x0E](Command0EManualBroadcastingMode)    | Manual Broadcasting Mode               |
+//! | [0x11](Command11StartAccessoryGameplay)    | Start Accessory Gameplay               |
+//! | [0x12](Command12StopAccessoryGameplay)     | Stop Accessory Gameplay                |
+//! | [0x20](Command20SetTriggerAction)          | Set Trigger Action                     |
+//! | [0x28](Command28DeleteTriggerAction)       | Delete Trigger Action                  |
+//! | [0x30](Command30SetTriggerCondition)       | Set Trigger Condition                  |
+//! | [0x40](Command40UpdateAccessorySettings)   | Update Accessory Settings              |
+//! | [0x50](Command50Unknown)                   | Unknown - Device Indicator Color       |
+//! | [0x60](Command60AccessoryCommand)          | Set color or clear trigger parameters. |
+//! | [0x72](Command72Unknown)                   | Unknown                                |
+//! | [0xA0](CommandA0Unknown)                   | Unknown                                |
+//! | [0xA2](CommandA2Unknown)                   | Unknown                                |
+//! | [0xAF](CommandAFRestoreWaveforms)          | Restore Waveforms                      |
+//! | [0xB0](CommandB0SetIntensity)              | Set Intensity and Waveform Data        |
+//! | [0xBC](CommandBCUnknown)                   | Unknown                                |
+//! | [0xBF](CommandBFSetLimits)                 | Set Balance and Limits                 |
+//! | [0xCC](CommandCCUnknown)                   | Unknown                                |
+//! | [0xE0](CommandE0Unknown)                   | Unknown                                |
+//! | [0xE1](CommandE1Unknown)                   | Unknown                                |
+//! | [0xEB](CommandEBUnknown)                   | Unknown                                |
+//! | [0xEC](CommandECUnknown)                   | Unknown                                |
+//! | [0xED](CommandEDUnknown)                   | Unknown                                |
+//! | [0xEF](CommandEFUnknown)                   | Unknown                                |
+//! | [0xFA](CommandFAUnknown)                   | Unknown                                |
+//! | [0xFB](CommandFBGetTriggerActionConfig)    | Get Trigger Action Config              |
+//! | [0xFC](CommandFCGetTriggerConditionConfig) | Get Trigger Condition Config                  |
+//! | [0xFD](CommandFDUnknown)                   | Unknown                                |
+//! | [0xFE](CommandFEClearAccessoryData)        | Clear Accessory Data                   |
+//! | [0xFF](CommandFFGetAllAccessoryData)       | Get All Accessory Data                 |
 
 use deku::{bitvec::BitVec, ctx::Endian, prelude::*};
 use serde::{Deserialize, Serialize};
 use std::io::{Read, Seek, Write};
 
 use crate::v3::common::{Color, Waveform};
+use crate::v3::notifications::*;
 
 /// ## Command 0x01 - Pair pawprint
 /// Tells the device to search for and pair with a nearby pawprint.
@@ -76,8 +66,8 @@ use crate::v3::common::{Color, Waveform};
 /// - [0x02 - Pawprint Paired]: Pawprint successfully paired.
 /// - [0x03 - No Pawprint Found]: Pawprint pairing timed out.
 ///
-/// [0x02 - Pawprint Paired]: crate::v3::notifications::Notification02PawprintPaired
-/// [0x03 - No Pawprint Found]: crate::v3::notifications::Notification03NoPawprintFound
+/// [0x02 - Pawprint Paired]: Notification02PawprintPaired
+/// [0x03 - No Pawprint Found]: Notification03NoPawprintFound
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Command01PairPawprint {}
 
@@ -94,32 +84,10 @@ pub struct Command01PairPawprint {}
 /// ### Response
 /// The device will respond with a [0x09 - Pawprint Unpaired] notification.
 ///
-/// [0x09 - Pawprint Unpaired]: crate::v3::notifications::Notification09PawprintUnpaired
+/// [0x09 - Pawprint Unpaired]: Notification09PawprintUnpaired
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Command08UnpairPawprint {
     pub pawprint_number: u8,
-}
-
-/// ## Command 0x0E - Manual Broadcasting Mode
-/// Gets or sets the Manual Broadcast mode. When in manual broadcast mode, the device will not be discoverable over Bluetooth unless the user manually flips both dials down and continues holding them while connecting.
-///
-/// ### Payload
-/// One of the following values:
-/// - `0x00` - Get status
-/// - `0x01` - Turn on
-/// - `0x02` - Turn off
-///
-/// ### Response
-/// The device will respond with a [0x0E - Manual Broadcasting Mode] notification containing the configured mode.
-///
-/// [0x0E - Manual Broadcasting Mode]: crate::v3::notifications::Notification0EManualBroadcastingMode
-#[repr(u8)]
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
-#[deku(id_type = "u8")]
-pub enum Command0EManualBroadcastingMode {
-    GetStatus = 0x00,
-    TurnOn = 0x01,
-    TurnOff = 0x02,
 }
 
 /// ## Command 0x0C - Unknown
@@ -136,7 +104,7 @@ pub enum Command0EManualBroadcastingMode {
 /// ### Response
 /// The device will respond with a [0x0C - Unknown] notification.
 ///
-/// [0x0C - Unknown]: crate::v3::notifications::Notification0CUnknown
+/// [0x0C - Unknown]: Notification0CUnknown
 /// [0x0D - Unknown]: crate::v3::commands::Command0DUnknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Command0CUnknown {
@@ -157,11 +125,33 @@ pub struct Command0CUnknown {
 /// ### Response
 /// The device will respond with a [0x0D - Unknown] notification.
 ///
-/// [0x0D - Unknown]: crate::v3::notifications::Notification0DUnknown
+/// [0x0D - Unknown]: Notification0DUnknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Command0DUnknown {
     #[deku(read_all)]
     pub data: Vec<u8>,
+}
+
+/// ## Command 0x0E - Manual Broadcasting Mode
+/// Gets or sets the Manual Broadcast mode. When in manual broadcast mode, the device will not be discoverable over Bluetooth unless the user manually flips both dials down and continues holding them while connecting.
+///
+/// ### Payload
+/// One of the following values:
+/// - `0x00` - Get status
+/// - `0x01` - Turn on
+/// - `0x02` - Turn off
+///
+/// ### Response
+/// The device will respond with a [0x0E - Manual Broadcasting Mode] notification containing the configured mode.
+///
+/// [0x0E - Manual Broadcasting Mode]: Notification0EManualBroadcastingMode
+#[repr(u8)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+#[deku(id_type = "u8")]
+pub enum Command0EManualBroadcastingMode {
+    GetStatus = 0x00,
+    TurnOn = 0x01,
+    TurnOff = 0x02,
 }
 
 /// ## Command 0x11 - Start Accessory Gameplay
@@ -173,8 +163,8 @@ pub struct Command0DUnknown {
 /// ## Response
 /// The device will respond with a [0x10 - Accessory Gameplay Response] notification. You may also receive [0x0F - Pawprint Connected] notifications for connected pawprints.
 ///
-/// [0x10 - Accessory Gameplay Response]: crate::v3::notifications::Notification10AccessoryGameplayResponse
-/// [0x0F - Pawprint Connected]: crate::v3::notifications::Notification0FPawprintConnected
+/// [0x10 - Accessory Gameplay Response]: Notification10AccessoryGameplayResponse
+/// [0x0F - Pawprint Connected]: Notification0FPawprintConnected
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Command11StartAccessoryGameplay {}
 
@@ -187,7 +177,7 @@ pub struct Command11StartAccessoryGameplay {}
 /// ## Response
 /// The device will respond with a [0x10 - Accessory Gameplay Response] notification.
 ///
-/// [0x10 - Accessory Gameplay Response]: crate::v3::notifications::Notification10AccessoryGameplayResponse
+/// [0x10 - Accessory Gameplay Response]: Notification10AccessoryGameplayResponse
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Command12StopAccessoryGameplay {}
 
@@ -404,25 +394,25 @@ pub struct Command28DeleteTriggerAction {
 
 /// ## Command 0x30 - Set trigger condition
 /// Configures a trigger condition
-/// 
+///
 /// ### Payload
 /// | Offset | Type | Description                     |
 /// |--------|------|---------------------------------|
 /// | 0      | u8   | Pawprint number                 |
 /// | 1      | u8   | Trigger type                    |
 /// | 2      | ...  | Trigger parameters              |
-/// 
+///
 /// Trigger types:
 /// - [0x01 - Press/Release](PressReleaseTrigger)
 /// - [0x02 - Acceleration/Angle](AccelerationAngleTrigger)
 /// - [0x03 - Random Reaction](RandomReactionTrigger)
 /// - [0x04 - Random Probability](RandomProbabilityTrigger)
 /// - [0x0F - ExternalVoltageInput](ExternalVoltageInputTrigger)
-/// 
+///
 /// ### Response
 /// The device will respond with a [0x31 - Trigger Condition Set] notification.
-/// 
-/// [0x31 - Trigger Condition Set]: crate::v3::notifications::Notification31TriggerConditionSet
+///
+/// [0x31 - Trigger Condition Set]: Notification31TriggerConditionSet
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Command30SetTriggerCondition {
     pub pawprint_number: u8,
@@ -446,7 +436,7 @@ pub enum TriggerCondition {
 
 /// ##  Trigger type 0x01 - Press/Release
 /// The Press/Release trigger is activated when the user presses or releases the button on a pawprint.
-/// 
+///
 /// ### Parameter Data
 /// | Offset | Type | Description                                |
 /// |--------|------|--------------------------------------------|
@@ -457,7 +447,7 @@ pub enum TriggerCondition {
 /// | 4      | u8   | Param decrease rate (slider val)           |
 /// | 5      | u8   | Param increase                             |
 /// | 6-13   | ...  | Padding (0x00)                             |
-/// 
+///
 /// TODO: document slider vals
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct PressReleaseTrigger {
@@ -471,7 +461,7 @@ pub struct PressReleaseTrigger {
 }
 
 /// ## Trigger type 0x02 - Acceleration/Angle
-/// 
+///
 /// ### Parameter Data
 /// | Offset | Type | Description                                  |
 /// |--------|------|----------------------------------------------|
@@ -484,11 +474,11 @@ pub struct PressReleaseTrigger {
 /// | 11     | u8   | Parameter mapping max                        |
 /// | 12     | u8   | Trigger debounce time (in 0.1s increments)   |
 /// | 13     | u8   | Untrigger debounce time (in 0.1s increments) |
-/// 
+///
 /// Acceleration modes:
 /// - [0x00 - Mode 1: Overall Acceleration](OverallAccelerationMode)
 /// - [0x02 - Mode 2: Angle Detection](AngleDetectionMode)
-/// 
+///
 /// Debounce times are in tenths of seconds. So for example, a value of 10 (0x0A) corresponds to 1 second, and a value of 255 (0xFF) corresponds to 25.5 seconds. The maximum time the app can set is 10.0 seconds (100 = 0x64). It's not known if the device accepts higher values.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct AccelerationAngleTrigger {
@@ -525,7 +515,7 @@ pub struct OverallAccelerationMode {
 }
 
 /// ### Acceleration Mode 2 - Angle Detection Mode
-/// 
+///
 /// ### Parameter Data
 /// | Offset | Type | Description                                  |
 /// |--------|------|----------------------------------------------|
@@ -535,7 +525,7 @@ pub struct OverallAccelerationMode {
 /// | 3      | i8   | Y-axis maximum angle (degrees / 2)           |
 /// | 4      | i8   | Z-axis minimum angle (degrees / 2)           |
 /// | 5      | i8   | Z-axis maximum angle (degrees / 2)           |
-/// 
+///
 /// All angles are in units of `degrees / 2`. So for example, a value of 90 (0x5A) corresponds to 180 degrees. Additionally, a value of [i8::MIN] (-128 = 0x80) means no negative angle limit, and a value of [i8::MAX] (127 = 0x7F) means no positive angle limit.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct AngleDetectionMode {
@@ -561,14 +551,14 @@ pub struct AngleDetectionMode {
 /// | 11-13  | ...  | Padding (0x00)                       |
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct RandomReactionTrigger {
-        pub minimum_activation_time: u16,
-        pub maximum_activation_time: u16,
-        pub reaction_time: u16,
-        pub param_increase_rate: u8,
-        pub param_decrease: u8,
-        pub param_decrease_rate: u8,
-        #[deku(pad_bytes_after = "3")]
-        pub param_increase: u8,
+    pub minimum_activation_time: u16,
+    pub maximum_activation_time: u16,
+    pub reaction_time: u16,
+    pub param_increase_rate: u8,
+    pub param_decrease: u8,
+    pub param_decrease_rate: u8,
+    #[deku(pad_bytes_after = "3")]
+    pub param_increase: u8,
 }
 
 /// ### Trigger type 0x04 - Random Probability
@@ -587,23 +577,23 @@ pub struct RandomReactionTrigger {
 /// | 10     | u8   | Slot 6 Trigger Action                |
 /// | 11     | u8   | Slot 6 Probability                   |
 /// | 12     | u16  | Cooldown time (in seconds)           |
-/// 
+///
 /// All probabilities are in increments of 0.5%. So for example, a value of 100 (0x64) corresponds to 50% probability. The maximum cooldown time the app can set is 18hr = 64800s = 0xfd20. It's not known if the device accepts higher values.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct RandomProbabilityTrigger {
-        pub slot1_trigger_action: u8,
-        pub slot1_probability: u8,
-        pub slot2_trigger_action: u8,
-        pub slot2_probability: u8,
-        pub slot3_trigger_action: u8,
-        pub slot3_probability: u8,
-        pub slot4_trigger_action: u8,
-        pub slot4_probability: u8,
-        pub slot5_trigger_action: u8,
-        pub slot5_probability: u8,
-        pub slot6_trigger_action: u8,
-        pub slot6_probability: u8,
-        pub cooldown_time: u16,
+    pub slot1_trigger_action: u8,
+    pub slot1_probability: u8,
+    pub slot2_trigger_action: u8,
+    pub slot2_probability: u8,
+    pub slot3_trigger_action: u8,
+    pub slot3_probability: u8,
+    pub slot4_trigger_action: u8,
+    pub slot4_probability: u8,
+    pub slot5_trigger_action: u8,
+    pub slot5_probability: u8,
+    pub slot6_trigger_action: u8,
+    pub slot6_probability: u8,
+    pub cooldown_time: u16,
 }
 
 /// ### Trigger type 0x0F - External Voltage Input
@@ -615,8 +605,8 @@ pub struct RandomProbabilityTrigger {
 /// | 3      | u8   | Maximum voltage                      |
 /// | 4      | u8   | Param mapping max voltage            |
 /// | 5-13   | ...  | Padding (0x00)                       |
-/// 
-/// The voltage values are in increments of 0.00875V. So for example, a value of 32 (0x20) corresponds to 0.28V, and a value of 64 (0x40) corresponds to 0.56V. The slider in the app goes up to 2.1v (0xF0), but it actually sends 0xFF for this value which is 2.23125V. 
+///
+/// The voltage values are in increments of 0.00875V. So for example, a value of 32 (0x20) corresponds to 0.28V, and a value of 64 (0x40) corresponds to 0.56V. The slider in the app goes up to 2.1v (0xF0), but it actually sends 0xFF for this value which is 2.23125V.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct ExternalVoltageInputTrigger {
     pub trigger_action_number: u8,
@@ -763,9 +753,9 @@ pub enum BaseIntensity {
 /// | 1      | ...  | Unknown               |
 ///
 /// First byte is the indicator color - see [Color]. The rest of the payload is unknown.
-/// 
+///
 /// The 3.0 app doen't have a color option and always sends `5007000000000000000000000000000000`.
-/// 
+///
 /// ### Example
 /// ```
 /// 0x50 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
@@ -773,8 +763,8 @@ pub enum BaseIntensity {
 ///
 /// ### Response
 /// The device responds with a [0x51 - Unknown] notification.
-/// 
-/// [0x51 - Unknown]: crate::v3::notifications::Notification51Unknown
+///
+/// [0x51 - Unknown]: Notification51Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Command50Unknown {
     pub indicator_color: Color,
@@ -787,15 +777,15 @@ pub struct Command50Unknown {
 ///
 /// ### Payload
 /// The payload is the button ID (1 byte) followed by a subcommand (1 byte) and subcommand data.
-/// 
+///
 /// | Offset | Type | Description           |
 /// |--------|------|-----------------------|
 /// | 0      | u8   | Button ID             |
 /// | 1      | u8   | Subcommand            |
 /// | ...    | ...  | Subcommand Data       |
-/// 
+///
 /// ### Subcommands
-/// 
+///
 /// #### Subcommand 0x70 - Set Light Color
 /// Changes the shoulder light color of a pawprint.
 ///
@@ -806,7 +796,7 @@ pub struct Command50Unknown {
 /// | 2      | u8   | Color                |
 ///
 /// For color values, see [Color]
-/// 
+///
 /// ##### Example
 /// `60 01 70 07` - Set button 1's shoulder light color to cyan.
 ///
@@ -817,23 +807,50 @@ pub struct Command50Unknown {
 /// |--------|------|---------------------------|
 /// | 0      | u8   | Button ID                 |
 /// | 1      | u8   | Clear Triggers SubCommand |
-/// 
+///
 /// ##### Example
 /// `60 01 5F` - Clear button 1's trigger parameters.
-/// 
+///
 /// ##### Subcommand 0x60 - Detect Angle Thresholds
 /// Triggers the automatic angle threshold detection for a button. The device will respond with a [0x70 - Angle Threshold Detected] notification.
-/// 
+///
 ///
 /// ```
 /// 0x60 01 60
 /// ```
 /// ### Response
 /// The device responds with a [0x61 - Unknown] notification.
-/// 
-/// [0x61 - Unknown]: crate::v3::notifications::Notification61Unknown
+///
+/// [0x61 - Unknown]: Notification61Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
-pub struct Command60AccessoryCommand {}
+pub struct Command60AccessoryCommand {
+    pub button_id: u8,
+    pub subcommand: AccessorySubcommand,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+#[deku(id_type = "u8")]
+pub enum AccessorySubcommand {
+    #[deku(id = "0x5F")]
+    ClearTriggerParameters,
+    #[deku(id = "0x60")]
+    DetectAngleThresholds,
+    #[deku(id = "0x70")]
+    SetLightColor { color: Color },
+}
+
+/// ### Command 0x72 - Unknown
+///
+/// ### Payload
+/// Unknown but required
+///
+/// ## Response
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct Command72Unknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
 
 /// ## Command 0xA0 - Unknown
 /// Sent when the user saves a waveform to device memory. It is followed by one or more `0xA2` commands containing the waveform data.
@@ -1000,29 +1017,175 @@ pub struct CommandBFSetLimits {
     pub intensity_balance_b: u8,
 }
 
-/// ## Command 0xFE - Clear Accessory Data
+/// ## Command 0xCC - Unknown
 ///
-/// Sent when clearing accessory settings. Clears all trigger actions and conditions, and unbinds all accessories.
+/// ### Payload
+/// Unknown but required
 ///
-/// The device then responds with a series of notifications (0xF1, 0xF2, 0xF3, 0xF4) containing the current settings.
+/// ## Response
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct CommandCCUnknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Command 0xE0 - Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct CommandE0Unknown {}
+
+/// ## Command 0xE1 - Unknown
+///
+/// ### Payload
+/// Unknown but required
+///
+/// ## Response
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct CommandE1Unknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Command 0xEB - Unknown
+///
+/// ### Payload
+/// Unknown but required
+///
+/// ## Response
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct CommandEBUnknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Command 0xEC - Unknown
+///
+/// ### Payload
+/// Unknown but required
+///
+/// ## Response
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct CommandECUnknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Command 0xED - Unknown
+///
+/// ### Payload
+/// The payload is hardcoded in the app, so no clue what the fields are.
+/// ```
+/// E8 69 11 3E 75 CE 00
+/// ```
+///
+/// ### Response
+/// The device responds with a [0xED - Unknown] notification.
+///
+/// [0xED - Unknown]: NotificationEDUnknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+#[deku(magic = b"\xe8\x69\x11\x3e\x75\xce\x00")]
+pub struct CommandEDUnknown {}
+
+/// ## Command 0xEF - Unknown
+///
+/// ### Payload
+/// Unknown but required
+///
+/// ## Response
+/// Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct CommandEFUnknown {
+    #[deku(read_all)]
+    pub data: Vec<u8>,
+}
+
+/// ## Command 0xFA - Unknown
 ///
 /// ### Payload
 /// This command has no payload.
+///
+/// ### Response
+/// The device responds with a [0xF1 - Unknown] notification.
+///
+/// [0xF1 - Unknown]: NotificationF1Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct CommandFAUnknown {}
+
+/// ## Command 0xFB - Get Trigger Action Config
+///
+/// ### Payload
+/// This command has no payload.
+///
+/// ### Response
+/// The device responds with a [0xF2 - Trigger Action Config] notification.
+///
+/// [0xF2 - Trigger Action Config]: NotificationF2TriggerActionConfig
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct CommandFBGetTriggerActionConfig {}
+
+/// ## Command 0xFC - Get Trigger Condition Config
+///
+/// ### Payload
+/// This command has no payload.
+///
+/// ## Response
+/// The device responds with a [0xF3 - Trigger Condition Config] notification.
+///
+/// [0xF3 - Trigger Condition Config]: NotificationF3TriggerConditionConfig
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct CommandFCGetTriggerConditionConfig {}
+
+/// ## Command 0xFD - Unknown
+///
+/// ### Payload
+/// This command has no payload.
+///
+/// ### Response
+/// The device responds with a [0xF4 - Unknown] notification.
+///
+/// [0xF4 - Unknown]: NotificationF4Unknown
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+pub struct CommandFDUnknown {}
+
+/// ## Command 0xFE - Clear Accessory Data
+/// Clears all trigger actions and conditions, and unbinds all accessories.
+///
+/// ### Payload
+/// This command has no payload.
+/// 
+/// ### Response
+/// The device responds with a series of notifications:
+/// - [0xF1 - Unknown]
+/// - [0xF3 - Trigger Condition Config] (empty/default config)
+/// - [0xF2 - Trigger Action Config] (empty/default config)
+/// - [0xF4 - Unknown]
+/// 
+/// [0xF1 - Unknown]: NotificationF1Unknown
+/// [0xF3 - Trigger Condition Config]: NotificationF3TriggerConditionConfig
+/// [0xF2 - Trigger Action Config]: NotificationF2TriggerActionConfig
+/// [0xF4 - Unknown]: NotificationF4Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct CommandFEClearAccessoryData {}
 
 /// ## Command 0xFF - Get All Accessory Data
-///
-/// Sent when refreshing accessory settings in the 4.0 app.
-///
-/// The device then responds with a series of notifications:
-/// - 0xF1
-/// - 0xF3 - once for each configured trigger condition
-/// - 0xF2 - once for each configured trigger action
-/// - 0xF4
-///
+/// Gets all accessory data, including trigger action and condition configurations.
+/// 
 /// ### Payload
 /// This command has no payload.
+/// 
+/// ### Response
+/// - [0xF1 - Unknown]
+/// - [0xF3 - Trigger Condition Config] (once for each configured trigger condition)
+/// - [0xF2 - Trigger Action Config] (once for each configured trigger action)
+/// - [0xF4 - Unknown]
+/// 
+/// [0xF1 - Unknown]: NotificationF1Unknown
+/// [0xF3 - Trigger Condition Config]: NotificationF3TriggerConditionConfig
+/// [0xF2 - Trigger Action Config]: NotificationF2TriggerActionConfig
+/// [0xF4 - Unknown]: NotificationF4Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct CommandFFGetAllAccessoryData {}
 
@@ -1040,12 +1203,12 @@ pub enum Command {
     PairPawprint(Command01PairPawprint),
     #[deku(id = "0x08")]
     UnpairPawprint(Command08UnpairPawprint),
-    #[deku(id = "0x0e")]
-    ManualBroadcastingMode(Command0EManualBroadcastingMode),
-    #[deku(id = "0x0c")]
+    #[deku(id = "0x0C")]
     Unknown0C(Command0CUnknown),
     #[deku(id = "0x0D")]
     Unknown0D(Command0DUnknown),
+    #[deku(id = "0x0E")]
+    ManualBroadcastingMode(Command0EManualBroadcastingMode),
     #[deku(id = "0x11")]
     StartAccessoryGameplay(Command11StartAccessoryGameplay),
     #[deku(id = "0x12")]
@@ -1061,7 +1224,9 @@ pub enum Command {
     #[deku(id = "0x50")]
     Unknown50(Command50Unknown),
     #[deku(id = "0x60")]
-    Unknown60(Command60AccessoryCommand),
+    AccessoryCommand(Command60AccessoryCommand),
+    #[deku(id = "0x72")]
+    Unknown72(Command72Unknown),
     #[deku(id = "0xA0")]
     UnknownA0(CommandA0Unknown),
     #[deku(id = "0xA2")]
@@ -1074,6 +1239,28 @@ pub enum Command {
     UnknownBC(CommandBCUnknown),
     #[deku(id = "0xBF")]
     SetLimits(CommandBFSetLimits),
+    #[deku(id = "0xCC")]
+    UnknownCC(CommandCCUnknown),
+    #[deku(id = "0xE0")]
+    UnknownE0(CommandE0Unknown),
+    #[deku(id = "0xE1")]
+    UnknownE1(CommandE1Unknown),
+    #[deku(id = "0xEB")]
+    UnknownEB(CommandEBUnknown),
+    #[deku(id = "0xEC")]
+    UnknownEC(CommandECUnknown),
+    #[deku(id = "0xED")]
+    UnknownED(CommandEDUnknown),
+    #[deku(id = "0xEF")]
+    UnknownEF(CommandEFUnknown),
+    #[deku(id = "0xFA")]
+    UnknownFA(CommandFAUnknown),
+    #[deku(id = "0xFB")]
+    UnknownFB(CommandFBGetTriggerActionConfig),
+    #[deku(id = "0xFC")]
+    UnknownFC(CommandFCGetTriggerConditionConfig),
+    #[deku(id = "0xFD")]
+    UnknownFD(CommandFDUnknown),
     #[deku(id = "0xFE")]
     ClearAccessoryData(CommandFEClearAccessoryData),
     #[deku(id = "0xFF")]
