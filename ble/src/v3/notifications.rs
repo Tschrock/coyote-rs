@@ -3,9 +3,9 @@
 //! Notifications are formatted as a single byte identifier followed by a variable length payload.
 //!
 //! ```
-//! +-----+------+------+------+...>
-//! | CMD | DATA                   |
-//! +-----+------+------+------+...>
+//! +-----+------+------+------+------>
+//! | ID  | DATA                  ... |
+//! +-----+------+------+------+------>
 //! ```
 //!
 //! | Notification                                    | Description                           |
