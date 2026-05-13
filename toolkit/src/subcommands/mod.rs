@@ -1,3 +1,3 @@
 pub mod common;
-pub mod scan;
 pub mod mitm;
+pub mod scan;

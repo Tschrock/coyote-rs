@@ -1,10 +1,9 @@
 use deku::{DekuRead, DekuWrite};
 use serde::{Deserialize, Serialize};
 
-
 /// ## Colors
 /// The colors used by the pawprint LEDs.
-/// 
+///
 /// | Value | Color  |
 /// |-------|--------|
 /// | 0x00  | Off    |
@@ -15,7 +14,7 @@ use serde::{Deserialize, Serialize};
 /// | 0x05  | Cyan   |
 /// | 0x06  | Green  |
 /// | 0x07  | White  |
-/// 
+///
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 #[deku(id_type = "u8")]
 pub enum Color {

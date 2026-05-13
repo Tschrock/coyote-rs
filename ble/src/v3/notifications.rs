@@ -45,7 +45,6 @@
 //! | [0xF3](NotificationF3TriggerConditionConfig)    | Trigger Condition Config              |
 //! | [0xF4](NotificationF4Unknown)                   | Unknown. Rcv'd after 0xBF             |
 
-
 use deku::{DekuRead, DekuWrite};
 use serde::{Deserialize, Serialize};
 
@@ -63,7 +62,7 @@ use super::commands::*;
 /// | 1      | 1    | u8   | Unknown         |
 /// | 2      | 1    | u8   | Battery level   |
 /// | 3      | 1    | u8   | Unknown         |
-/// 
+///
 /// [0x01 - Pair Pawprint]: crate::v3::commands::Command01PairPawprint
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Notification02PawprintPaired {
@@ -78,14 +77,14 @@ pub struct Notification02PawprintPaired {
 ///
 /// ### Payload
 /// This notification has no payload.
-/// 
+///
 /// [0x01 - Pair Pawprint]: crate::v3::commands::Command01PairPawprint
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Notification03NoPawprintFound {}
 
 /// ## Notification 0x04 - Unknown
 /// Unknown
-/// 
+///
 /// ### Payload
 /// Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
@@ -96,10 +95,10 @@ pub struct Notification04Unknown {
 
 /// ## Notification 0x09 - Pawprint Unpaired
 /// Response to the [0x08 - Unpair Pawprint] command.
-/// 
+///
 /// ### Payload
 /// Same as [0x08 - Unpair Pawprint].
-/// 
+///
 /// [0x08 - Unpair Pawprint]: crate::v3::commands::Command08UnpairPawprint
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Notification09PawprintUnpaired {
@@ -108,7 +107,7 @@ pub struct Notification09PawprintUnpaired {
 
 /// ## Notification 0x0C - Unknown
 /// Unknown
-/// 
+///
 /// ### Payload
 /// Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
@@ -119,22 +118,22 @@ pub struct Notification0CUnknown {
 
 /// ## Notification 0x0D - Unknown
 /// Response to the [0x0D - Unknown] command.
-/// 
+///
 /// ### Payload
 /// Unknown
-/// 
+///
 /// ## Examples
 /// - 00000000000000000000000000000000 - Before pairing - response to 0d command
 /// - fffffffe000000000000000000000002 - When pairing - response to 0dffffffffffffffffffffffffffffffff command
 /// - 7e769b9ffabf00000000000000000502 - on connection after pairing - response to 0d command
 /// - 7e769b9ffabf00000000000000000400 - When unpairing - response to 0d00000000000000000000000000000000 command
 /// - 7e769b9ffabf00000000000000000400 - on connection after unpairing - response to 0d command
-/// 
+///
 /// - 7e769b9ffabf00000000000000000400 - Before pairing
 /// - fffffffefabf00000000000000000402 - After 0dffffffffffffffffffffffffffffffff
 /// - 0c responds with 7e769b9ffabf00000000000000000502
 /// - Data: 7e769b9ffabf00000000000000000502 - on connection after pairing - response to 0d command
-/// 
+///
 /// [0x0D - Unknown]: crate::v3::commands::Command0DUnknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Notification0DUnknown {
@@ -144,13 +143,13 @@ pub struct Notification0DUnknown {
 
 /// ## Notification 0x0E - Manual Broadcasting Mode
 /// Response to the [0x0E - Manual Broadcasting Mode] command.
-/// 
+///
 /// > Note: these being 0x0A and 0x0B makes me think it's a bitfield, but I haven't seen any other values yet.
-/// 
+///
 /// ### Payload
 /// - `0x0A` - Manual broadcasting mode enabled
 /// - `0x0B` - Manual broadcasting mode disabled
-/// 
+///
 /// [0x0E - Manual Broadcasting Mode]: crate::v3::commands::Command0EManualBroadcastingMode
 #[repr(u8)]
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
@@ -206,7 +205,7 @@ pub type Notification21TriggerActionSet = Command20SetTriggerAction;
 
 /// ## Notification 0x29 - Unknown
 /// Unknown
-/// 
+///
 /// ### Payload
 /// Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
@@ -224,7 +223,7 @@ pub type Notification31TriggerConditionSet = Command30SetTriggerCondition;
 
 /// ## Notification 0x41 - Unknown
 /// Unknown
-/// 
+///
 /// ### Payload
 /// Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
@@ -242,12 +241,12 @@ pub struct Notification41Unknown {
 /// | 0      | 1    | u8   | Indicator Color |
 /// | 1      | 1    | u8   | Unknown         |
 /// | 2      | 1    | u8   | Battery level   |
-/// 
+///
 /// See [Color] for possible indicator color values.
-/// 
+///
 /// ### Examples
 /// - `03 10 41` - Indicator color 3, unknown, battery 65%
-/// 
+///
 /// [0x50 - Unknown]: crate::v3::commands::Command50Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Notification51Unknown {
@@ -275,13 +274,13 @@ pub struct Notification53Unknown {
 ///
 /// ### Payload
 /// A copy of the data sent in the [0x60 - Accessory Command] command.
-/// 
+///
 /// [0x60 - Accessory Command]: crate::v3::commands::Command60AccessoryCommand
 pub type Notification61Unknown = Command60AccessoryCommand;
 
 /// ## Notification 0x70 - Angle Threshold Detected
 /// Sent once angle thresholds have been detected. Detection can be started with the angle detection [0x60 - Accessory Command].
-/// 
+///
 /// ### Payload
 /// | Offset | Size | Type | Description                        |
 /// |--------|------|------|------------------------------------|
@@ -302,9 +301,9 @@ pub type Notification61Unknown = Command60AccessoryCommand;
 /// - X: -11 to 64
 /// - Y: -42 to 20
 /// - Z: 101 to 125
-/// 
+///
 /// > Note: The sliders in the app go by 2s so only even numbers show up there.
-/// 
+///
 /// [0x60 - Accessory Command]: crate::v3::commands::Command60AccessoryCommand
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Notification70Unknown {
@@ -314,7 +313,7 @@ pub struct Notification70Unknown {
 
 /// ## Notification 0x99 - Unknown
 /// Unknown
-/// 
+///
 /// ## Payload
 /// Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
@@ -355,7 +354,7 @@ pub struct NotificationA3Unknown {
 
 /// ## Notification 0xA4 - Unknown
 /// Unknown
-/// 
+///
 /// ## Payload
 /// Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
@@ -397,7 +396,7 @@ pub struct NotificationB1IntensityChanged {
 
 /// ## Notification 0xBD - Unknown
 /// Unknown
-/// 
+///
 /// ## Payload
 /// Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
@@ -440,7 +439,7 @@ pub struct NotificationBELimitsChanged {
 
 /// ## Notification 0xC9 - Unknown
 /// Unknown. Old strength header?
-/// 
+///
 /// ## Payload
 /// Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
@@ -451,7 +450,7 @@ pub struct NotificationC9Unknown {
 
 /// ## Notification 0xD1 - Unknown
 /// Unknown
-/// 
+///
 /// ## Payload
 /// Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
@@ -497,7 +496,7 @@ pub struct NotificationE0Error {
 
 /// ## Notification 0xE2 - Unknown
 /// Unknown
-/// 
+///
 /// ## Payload
 /// Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
@@ -508,7 +507,7 @@ pub struct NotificationE2Unknown {
 
 /// ## Notification 0xED - Unknown
 /// Unknown
-/// 
+///
 /// ## Payload
 /// ```
 /// Data: 09 03 0d17099428c16d9bd4 4b35333762313639
@@ -516,7 +515,7 @@ pub struct NotificationE2Unknown {
 /// - Version: 0x09
 /// - Label: 0x03
 /// - Build Info?: 4b35333762313639 = "K537b169"
-/// 
+///
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct NotificationEDUnknown {
     version: u8,

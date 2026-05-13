@@ -1,4 +1,3 @@
-
 /// Helper struct for calculating slider values based on defined steps - used for calculating the true values for Pulse Frequency and Section Duration sliders.
 #[derive(Debug)]
 pub struct SliderCalc {

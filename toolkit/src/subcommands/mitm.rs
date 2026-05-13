@@ -1,13 +1,15 @@
 use bluer::{
-    Uuid, adv::{Advertisement, Type as AdvType}, gatt::{
+    Uuid,
+    adv::{Advertisement, Type as AdvType},
+    gatt::{
         local::{
             Application, Characteristic, CharacteristicNotify, CharacteristicNotifyMethod,
             CharacteristicRead, CharacteristicWrite, CharacteristicWriteMethod, Service,
         },
         remote,
-    }
+    },
 };
-use coyote_connect_ble::pawprint::attributes::SERVICE_GENERIC_ATTRIBUTE_PROFILE;
+use coyote_connect_ble::v3::attributes::SERVICE_GENERIC_ATTRIBUTE_PROFILE;
 use futures::{FutureExt, StreamExt};
 use std::collections::BTreeMap;
 use tokio::io::{AsyncBufReadExt, BufReader};
@@ -234,7 +236,9 @@ pub async fn mitm_ble_device(
     device.disconnect().await?;
     adapter.remove_device(address).await?;
 
-    println!("You may need to turn bluetooth off and back on again before you can connect to the device again.");
+    println!(
+        "You may need to turn bluetooth off and back on again before you can connect to the device again."
+    );
     println!("Goodbye");
     Ok(())
 }

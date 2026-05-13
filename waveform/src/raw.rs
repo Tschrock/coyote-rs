@@ -312,7 +312,10 @@ mod tests {
         };
 
         let export_string = waveform.export();
-        assert_eq!(export_string, "Dungeonlab+pulse:28,2,8=29,7,24,4,1/0.00-1,50.00-0,100.00-1+section+3,0,16,1,0/0.00-1,100.00-1");
+        assert_eq!(
+            export_string,
+            "Dungeonlab+pulse:28,2,8=29,7,24,4,1/0.00-1,50.00-0,100.00-1+section+3,0,16,1,0/0.00-1,100.00-1"
+        );
     }
 
     #[test]

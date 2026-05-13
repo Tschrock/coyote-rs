@@ -1,10 +1,10 @@
 //! BLE interface for the Coyote Pulse Host V3.
 
-pub mod device;
 pub mod attributes;
 pub mod commands;
-pub mod notifications;
 pub mod common;
+pub mod device;
+pub mod notifications;
 
 /// The default name for the Pulse Host.
 pub const PULSE_HOST_DEFAULT_NAME: &str = "47L121000";

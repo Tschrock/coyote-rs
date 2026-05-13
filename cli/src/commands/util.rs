@@ -4,11 +4,7 @@ pub trait Plural {
 
 impl Plural for usize {
     fn plural<A: AsRef<str>>(&self, singular: A, plural: A) -> A {
-        if *self == 1 {
-            singular
-        } else {
-            plural
-        }
+        if *self == 1 { singular } else { plural }
     }
 }
 

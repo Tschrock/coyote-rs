@@ -19,7 +19,6 @@ pub enum Commands {
     Battery(Battery),
 }
 
-
 #[derive(Parser)]
 /// Scans for Coyote devices
 pub struct Scan {

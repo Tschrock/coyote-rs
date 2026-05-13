@@ -4,17 +4,17 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-clap = { version = "4.5.55", features = ["derive"] }
 btleplug = { workspace = true }
-log = { workspace = true }
-rand = { workspace = true }
-tokio = { workspace = true }
-uuid = { workspace = true }
-serde = { workspace = true }
-deku = { workspace = true }
-futures-util = { workspace = true }
-tokio-util = { workspace = true }
-thiserror = { workspace = true }
-num-traits = { workspace = true }
-env_logger = { workspace = true }
+clap = { version = "4.5.55", features = ["derive"] }
 coyote-connect-ble = { workspace = true }
+deku = { workspace = true }
+env_logger = { workspace = true }
+futures-util = { workspace = true }
+log = { workspace = true }
+num-traits = { workspace = true }
+rand = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+uuid = { workspace = true }

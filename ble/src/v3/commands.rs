@@ -1155,14 +1155,14 @@ pub struct CommandFDUnknown {}
 ///
 /// ### Payload
 /// This command has no payload.
-/// 
+///
 /// ### Response
 /// The device responds with a series of notifications:
 /// - [0xF1 - Unknown]
 /// - [0xF3 - Trigger Condition Config] (empty/default config)
 /// - [0xF2 - Trigger Action Config] (empty/default config)
 /// - [0xF4 - Unknown]
-/// 
+///
 /// [0xF1 - Unknown]: NotificationF1Unknown
 /// [0xF3 - Trigger Condition Config]: NotificationF3TriggerConditionConfig
 /// [0xF2 - Trigger Action Config]: NotificationF2TriggerActionConfig
@@ -1172,16 +1172,16 @@ pub struct CommandFEClearAccessoryData {}
 
 /// ## Command 0xFF - Get All Accessory Data
 /// Gets all accessory data, including trigger action and condition configurations.
-/// 
+///
 /// ### Payload
 /// This command has no payload.
-/// 
+///
 /// ### Response
 /// - [0xF1 - Unknown]
 /// - [0xF3 - Trigger Condition Config] (once for each configured trigger condition)
 /// - [0xF2 - Trigger Action Config] (once for each configured trigger action)
 /// - [0xF4 - Unknown]
-/// 
+///
 /// [0xF1 - Unknown]: NotificationF1Unknown
 /// [0xF3 - Trigger Condition Config]: NotificationF3TriggerConditionConfig
 /// [0xF2 - Trigger Action Config]: NotificationF2TriggerActionConfig

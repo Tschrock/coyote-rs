@@ -2,7 +2,7 @@
 //!
 //! Notifications are formatted as a single byte identifier followed by a variable length payload.
 //!
-//! 
+//!
 //! ```
 //! +-----+------+------+------+------>
 //! | ID  | DATA                  ... |
@@ -20,7 +20,7 @@ use serde::{Deserialize, Serialize};
 
 /// ## Notification 0x51 - Unknown
 /// Unknown
-/// 
+///
 /// ### Payload
 /// Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
@@ -31,7 +31,7 @@ pub struct Notification51Unknown {
 
 /// ## Notification 0x53 - Unknown
 /// Unknown
-/// 
+///
 /// ### Payload
 /// Unknown
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
@@ -42,7 +42,7 @@ pub struct Notification53Unknown {
 
 /// ## Notification 0xF1 - Detect Angles Result
 /// Result of the angle detection process started by the [0x60 - Detect Angles] command. Might be used for more responses, but 0x61 is the only known one so far.
-/// 
+///
 /// ### Payload
 /// | Offset | Type | Description          |
 /// |--------|------|----------------------|
@@ -53,10 +53,10 @@ pub struct Notification53Unknown {
 /// | 7      | i16  | Y Max                |
 /// | 9      | i16  | Z Min                |
 /// | 11     | i16  | Z Max                |
-/// 
+///
 /// ### Examples
 /// - f1 61 ff d9 00 29 ff c6 ff ff 00 5e 00 88 - X Min -39, X Max 41, Y Min -58, Y Max 0, Z Min 94, Z Max 136
-/// 
+///
 /// [0x60 - Detect Angles]: crate::pawprint::commands::Command60DetectAngles
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct NotificationF1DetectAnglesResult {
