@@ -3,18 +3,18 @@ resolver = "3"
 members = ["ble", "cli", "core", "socket", "toolkit", "waveform"]
 
 [workspace.dependencies]
-btleplug = { version = "0.11", features = ["serde"] }
+btleplug = { version = "0.13.4", features = ["serde"] }
 coyote-connect-ble = { path = "./ble" }
 coyote-connect-core = { path = "./core" }
 coyote-connect-waveform = { path = "./waveform" }
 deku = "0.20.3"
-env_logger = "0.11.8"
-futures-util = "0.3.31"
-log = "0.4.29"
+env_logger = "0.11.11"
+futures-util = "0.3.34"
+log = "0.4.34"
 num-traits = "0.2"
-rand = "0.9.2"
+rand = "0.10.3"
 serde = { version = "1.0", features = ["derive"] }
-thiserror = "2.0.18"
+thiserror = "2.0.21"
 tokio = { version = "1", features = ["full"] }
-tokio-util = "0.7.18"
-uuid = "1.20.0"
+tokio-util = "0.7.20"
+uuid = "1.28.0"
