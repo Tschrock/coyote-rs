@@ -953,13 +953,13 @@ pub struct CommandB0SetIntensity {
 #[deku(id_type = "u8", bits = 2)]
 pub enum IntensityInterpretation {
     /// > Represents that the intensity of the corresponding channel does not change. The intensity setting value of the corresponding channel is invalid no matter what it is.
-    Ignore = 0x00,
+    Ignore = 0b00,
     /// > Represents the relative increase of the intensity of the corresponding channel. If the intensity setting value of channel A is 15 (decimal), then the intensity of channel A increases by 15.
-    Increase = 0x01,
+    Increase = 0b01,
     /// > Represents the relative decrease of the intensity of the corresponding channel. If the intensity setting value of channel A is 17 (decimal), then the intensity of channel A decreases by 17.
-    Decrease = 0x10,
+    Decrease = 0b10,
     /// > Represents the absolute change of the intensity of the corresponding channel. If the intensity setting value of channel A is 32, then the intensity of channel A is set to 32.
-    Absolute = 0x11,
+    Absolute = 0b11,
 }
 
 /// ## Command 0xBC - Unknown
@@ -1074,12 +1074,15 @@ pub struct CommandECUnknown {
 }
 
 /// ## Command 0xED - Unknown
-///
+/// Sent when tapping the "Console" text 10x at the top of the control screen in the app. The app copies the response notification data to the clipboard.
+/// 
 /// ### Payload
 /// The payload is hardcoded in the app, so no clue what the fields are.
 /// ```
 /// E8 69 11 3E 75 CE 00
 /// ```
+/// 
+/// Changing any of the bytes except the last causes an invalid format error response.
 ///
 /// ### Response
 /// The device responds with a [0xED - Unknown] notification.
