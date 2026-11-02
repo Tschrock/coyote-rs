@@ -1,3 +1,6 @@
+//! Scan subcommand: writes every command byte (0x00..=0xFF) to the target
+//! and prints the notifications sent back.
+
 use std::{io::Write, pin::pin, time::Duration};
 
 use futures::StreamExt;

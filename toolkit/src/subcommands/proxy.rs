@@ -1,3 +1,8 @@
+//! Proxy subcommand: stands up a local BLE device mirroring the target's
+//! services and characteristics, relaying reads, writes, and notifications
+//! between a client and the real device while logging the traffic for
+//! debugging and verification.
+
 use bluer::{
     Uuid,
     adv::{Advertisement, Type as AdvType},
@@ -16,8 +21,8 @@ use tokio::io::{AsyncBufReadExt, BufReader};
 
 use crate::subcommands::common::{DeviceFilter, PAWPRINT_CONNECT_CMD};
 
-pub async fn mitm_coyote() -> Result<(), Box<dyn std::error::Error>> {
-    mitm_ble_device(
+pub async fn proxy_coyote() -> Result<(), Box<dyn std::error::Error>> {
+    proxy_ble_device(
         None,
         DeviceFilter::ByName(coyote_connect_ble::v3::PULSE_HOST_DEFAULT_NAME.to_string()),
         None,
@@ -25,8 +30,8 @@ pub async fn mitm_coyote() -> Result<(), Box<dyn std::error::Error>> {
     .await
 }
 
-pub async fn mitm_pawprint() -> Result<(), Box<dyn std::error::Error>> {
-    mitm_ble_device(
+pub async fn proxy_pawprint() -> Result<(), Box<dyn std::error::Error>> {
+    proxy_ble_device(
         None,
         DeviceFilter::ByName(coyote_connect_ble::pawprint::PAWPRINT_DEFAULT_NAME.to_string()),
         Some(&PAWPRINT_CONNECT_CMD),
@@ -34,7 +39,7 @@ pub async fn mitm_pawprint() -> Result<(), Box<dyn std::error::Error>> {
     .await
 }
 
-pub async fn mitm_ble_device(
+pub async fn proxy_ble_device(
     adapter_filter: Option<&str>,
     device_filter: DeviceFilter,
     connection_command: Option<&[u8]>,

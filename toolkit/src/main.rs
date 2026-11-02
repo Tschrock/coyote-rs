@@ -11,8 +11,8 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Command {
-    /// Man-in-the-middle a BLE device
-    Mitm {
+    /// Proxy a BLE device
+    Proxy {
         #[command(subcommand)]
         target: Target,
     },
@@ -33,9 +33,9 @@ enum Target {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
     match cli.command {
-        Command::Mitm { target } => match target {
-            Target::Coyote => subcommands::mitm::mitm_coyote().await,
-            Target::Pawprint => subcommands::mitm::mitm_pawprint().await,
+        Command::Proxy { target } => match target {
+            Target::Coyote => subcommands::proxy::proxy_coyote().await,
+            Target::Pawprint => subcommands::proxy::proxy_pawprint().await,
         },
         Command::Scan { target } => match target {
             Target::Coyote => subcommands::scan::scan_coyote().await,
