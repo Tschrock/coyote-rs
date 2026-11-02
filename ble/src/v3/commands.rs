@@ -452,12 +452,21 @@ pub enum TriggerCondition {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct PressReleaseTrigger {
     pub trigger_action_number: u8,
-    pub is_press: bool,
+    pub trigger_mode: PressReleaseMode,
     pub param_increase_rate: u8,
     pub param_decrease: u8,
     pub param_decrease_rate: u8,
     #[deku(pad_bytes_after = "8")]
     pub param_increase: u8,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
+#[deku(id_type = "u8")]
+pub enum PressReleaseMode {
+    #[deku(id = "0x00")]
+    Press,
+    #[deku(id = "0x01")]
+    Release,
 }
 
 /// ## Trigger type 0x02 - Acceleration/Angle
