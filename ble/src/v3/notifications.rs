@@ -386,7 +386,7 @@ pub struct NotificationAEWaveformsRestored {}
 /// | 2      | 1    | u8   | Current intensity of channel B |
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct NotificationB1IntensityChanged {
-    /// 1 byte, 0 ~ 200
+    /// 1 byte, 0b0000 ~ 0b1111
     pub sequence_number: u8,
     /// 1 byte, 0 ~ 200
     pub current_intensity_a: u8,
@@ -423,17 +423,17 @@ pub struct NotificationBDUnknown {
 /// | 5      | 1    | u8   | Channel B waveform intensity balance |
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct NotificationBELimitsChanged {
-    /// 2 bytes, 0 ~ 200
+    /// 1 byte, 0 ~ 200
     pub limit_a: u8,
-    /// 2 bytes, 0 ~ 200
+    /// 1 byte, 0 ~ 200
     pub limit_b: u8,
-    /// 2 bytes, 0 ~ 255
+    /// 1 byte, 0 ~ 255
     pub freq_balance_a: u8,
-    /// 2 bytes, 0 ~ 255
+    /// 1 byte, 0 ~ 255
     pub freq_balance_b: u8,
-    /// 2 bytes, 0 ~ 255
+    /// 1 byte, 0 ~ 255
     pub intensity_balance_a: u8,
-    /// 2 bytes, 0 ~ 255
+    /// 1 byte, 0 ~ 255
     pub intensity_balance_b: u8,
 }
 

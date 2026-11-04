@@ -504,6 +504,8 @@ pub struct AccelerationAngleTrigger {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 #[deku(id_type = "u8")]
 pub enum AccelerationMode {
+    #[deku(id = "0x00")]
+    None,
     #[deku(id = "0x01")]
     OverallAcceleration(OverallAccelerationMode),
     #[deku(id = "0x02")]
@@ -807,7 +809,7 @@ pub struct Command50Unknown {
 /// For color values, see [Color]
 ///
 /// ##### Example
-/// `60 01 70 07` - Set button 1's shoulder light color to cyan.
+/// `60 01 70 07` - Set button 1's shoulder light color to white.
 ///
 /// #### Subcommand 0x5F - Clear Trigger Parameters
 /// Clears the trigger parameters for a button
