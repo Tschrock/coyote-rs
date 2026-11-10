@@ -10,14 +10,14 @@
 //!
 //! | Notification                                    | Description                           |
 //! |-------------------------------------------------|---------------------------------------|
-//! | [0x02](Notification02PawprintPaired)            | Pawprint Paired                       |
-//! | [0x03](Notification03NoPawprintFound)           | No Pawprint Found                     |
-//! | [0x04](Notification04Unknown)                   | Unknown                               |
-//! | [0x09](Notification09PawprintUnpaired)          | Pawprint Unpaired                     |
+//! | [0x02](Notification02AccessoryPaired)           | Accessory Paired                      |
+//! | [0x03](Notification03NoAccessoryFound)          | No Accessory Found                    |
+//! | [0x04](Notification04AccessoryAlreadyPaired)    | Accessory Already Paired              |
+//! | [0x09](Notification09AccessoryUnpaired)         | Accessory Unpaired                    |
 //! | [0x0C](Notification0CUnknown)                   | Unknown                               |
 //! | [0x0D](Notification0DUnknown)                   | Unknown                               |
 //! | [0x0E](Notification0EManualBroadcastingMode)    | Manual Broadcasting Mode              |
-//! | [0x0F](Notification0FPawprintConnected)         | Pawprint Connected                    |
+//! | [0x0F](Notification0FAccessoryStateChange)      | Accessory State Change                |
 //! | [0x10](Notification10AccessoryGameplayResponse) | Accessory Gameplay Response           |
 //! | [0x21](Notification21TriggerActionSet)          | Trigger Action Set                    |
 //! | [0x29](Notification29Unknown)                   | Unknown                               |
@@ -52,57 +52,61 @@ use crate::v3::common::Color;
 
 use super::commands::*;
 
-/// ## Notification 0x02 - Pawprint Paired
-/// This notification is a response to the [0x01 - Pair Pawprint] command. It indicates an accessory was successfully paired with the device.
+/// ## Notification 0x02 - Accessory Paired
+/// This notification is a response to the [0x01 - Pair Accessory] command. It indicates an accessory was successfully paired with the device.
+/// Each new accessory is assigned a number based on the lowest unused slot from 1-6.
 ///
 /// ### Payload
-/// | Offset | Size | Type | Description     |
-/// |--------|------|------|-----------------|
-/// | 0      | 1    | u8   | Pawprint number |
-/// | 1      | 1    | u8   | Unknown         |
-/// | 2      | 1    | u8   | Battery level   |
-/// | 3      | 1    | u8   | Unknown         |
+/// | Offset | Size | Type | Description          |
+/// |--------|------|------|----------------------|
+/// | 0      | 1    | u8   | Accessory number     |
+/// | 1      | 1    | u8   | Accessory type       |
+/// | 2      | 1    | u8   | Battery level        |
+/// | 3      | 1    | u8   | Status (always 0x01) |
 ///
-/// [0x01 - Pair Pawprint]: crate::v3::commands::Command01PairPawprint
+/// ### Examples
+/// - `01 01 1e 01` - Pawprint 1, battery 30%.
+///
+/// [0x01 - Pair Accessory]: crate::v3::commands::Command01PairAccessory
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
-pub struct Notification02PawprintPaired {
-    pub pawprint_number: u8,
-    pub unknown1: u8,
+pub struct Notification02AccessoryPaired {
+    pub accessory_number: u8,
+    pub accessory_type: u8,
     pub battery_level: u8,
-    pub unknown2: u8,
+    pub status: u8,
 }
 
-/// ## Notification 0x03 - No Pawprint Found
-/// This notification is a response to the [0x01 - Pair Pawprint] command. It indicates an accessory was not found.
+/// ## Notification 0x03 - No Accessory Found
+/// This notification is a response to the [0x01 - Pair Accessory] command. It indicates an accessory was not found.
+/// 
+/// Returned immediately if there are no slots available to pair a new accessory. The Coyote v3 can bind a maximum of 6 devices.
 ///
 /// ### Payload
 /// This notification has no payload.
 ///
-/// [0x01 - Pair Pawprint]: crate::v3::commands::Command01PairPawprint
+/// [0x01 - Pair Accessory]: crate::v3::commands::Command01PairAccessory
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
-pub struct Notification03NoPawprintFound {}
+pub struct Notification03NoAccessoryFound {}
 
-/// ## Notification 0x04 - Unknown
-/// Unknown
+/// ## Notification 0x04 - Accessory Already Paired
+/// Returned when the paired accessory is already bonded.
 ///
 /// ### Payload
-/// Unknown
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
-pub struct Notification04Unknown {
-    #[deku(read_all)]
-    pub data: Vec<u8>,
-}
+/// Same as [0x02 - Accessory Paired].
+///
+/// [0x02 - Accessory Paired]: Notification02AccessoryPaired
+pub type Notification04AccessoryAlreadyPaired = Notification02AccessoryPaired;
 
-/// ## Notification 0x09 - Pawprint Unpaired
-/// Response to the [0x08 - Unpair Pawprint] command.
+/// ## Notification 0x09 - Accessory Unpaired
+/// Response to the [0x08 - Unpair Accessory] command.
 ///
 /// ### Payload
-/// Same as [0x08 - Unpair Pawprint].
+/// The accessory number that was unpaired.
 ///
-/// [0x08 - Unpair Pawprint]: crate::v3::commands::Command08UnpairPawprint
+/// [0x08 - Unpair Accessory]: crate::v3::commands::Command08UnpairAccessory
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
-pub struct Notification09PawprintUnpaired {
-    pub pawprint_number: u8,
+pub struct Notification09AccessoryUnpaired {
+    pub accessory_number: u8,
 }
 
 /// ## Notification 0x0C - Unknown
@@ -159,25 +163,32 @@ pub enum Notification0EManualBroadcastingMode {
     Disabled = 0x0B,
 }
 
-/// ## Notification 0x0F - Pawprint Connected
-/// This notification is sent when a previously paired pawprint is connects to the coyote.
+/// ## Notification 0x0F - Accessory State Change
+/// This notification is sent when a previously paired pawprint connects, disconnects, or reports a battery change.
 ///
 /// ### Payload
 /// The payload appears to be identical to the 0x02 notification.
+/// 
+/// When a device disconnects, the type, battery, and status bytes are all set to 0.
 ///
-/// The payload is 4 bytes long. The first byte is the pawprint number, the third byte is the battery level. The second and fourth bytes are unknown, but one of them is a version number.
+/// The payload is 4 bytes long.
+/// 
 /// | Offset | Size | Type | Description     |
 /// |--------|------|------|-----------------|
 /// | 0      | 1    | u8   | Pawprint number |
-/// | 1      | 1    | u8   | Unknown         |
+/// | 1      | 1    | u8   | Accessory type  |
 /// | 2      | 1    | u8   | Battery level   |
-/// | 3      | 1    | u8   | Unknown         |
+/// | 3      | 1    | u8   | Status          |
+/// 
+/// ### Status
+/// - `0x00` - Disconnected
+/// - `0x01` - Connected
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
-pub struct Notification0FPawprintConnected {
-    pub pawprint_number: u8,
-    pub unknown1: u8,
+pub struct Notification0FAccessoryStateChange {
+    pub accessory_number: u8,
+    pub accessory_type: u8,
     pub battery_level: u8,
-    pub unknown2: u8,
+    pub status: u8,
 }
 
 /// ## Notification 0x10 - Accessory Gameplay Response
@@ -574,13 +585,13 @@ pub struct UnknownNotification {
 #[deku(id_type = "u8")]
 pub enum Notification {
     #[deku(id = "0x02")]
-    PawprintPaired(Notification02PawprintPaired),
+    AccessoryPaired(Notification02AccessoryPaired),
     #[deku(id = "0x03")]
-    NoPawprintFound(Notification03NoPawprintFound),
+    NoAccessoryFound(Notification03NoAccessoryFound),
     #[deku(id = "0x04")]
-    Unknown04(Notification04Unknown),
+    AccessoryAlreadyPaired(Notification04AccessoryAlreadyPaired),
     #[deku(id = "0x09")]
-    PawprintUnpaired(Notification09PawprintUnpaired),
+    AccessoryUnpaired(Notification09AccessoryUnpaired),
     #[deku(id = "0x0C")]
     Unknown0C(Notification0CUnknown),
     #[deku(id = "0x0D")]
@@ -588,7 +599,7 @@ pub enum Notification {
     #[deku(id = "0x0E")]
     ManualBroadcastingMode(Notification0EManualBroadcastingMode),
     #[deku(id = "0x0F")]
-    PawprintConnected(Notification0FPawprintConnected),
+    AccessoryStateChange(Notification0FAccessoryStateChange),
     #[deku(id = "0x10")]
     AccessoryGameplayResponse(Notification10AccessoryGameplayResponse),
     #[deku(id = "0x21")]

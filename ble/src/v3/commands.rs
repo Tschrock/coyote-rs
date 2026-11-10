@@ -12,8 +12,8 @@
 //!
 //! | Command                                    | Description                            |
 //! |--------------------------------------------|----------------------------------------|
-//! | [0x01](Command01PairPawprint)              | Pair Pawprint                          |
-//! | [0x08](Command08UnpairPawprint)            | Unpair Pawprint                        |
+//! | [0x01](Command01PairAccessory)             | Pair Accessory                         |
+//! | [0x08](Command08UnpairAccessory)           | Unpair Accessory                       |
 //! | [0x0C](Command0CUnknown)                   | Unknown                                |
 //! | [0x0D](Command0DUnknown)                   | Unknown                                |
 //! | [0x0E](Command0EManualBroadcastingMode)    | Manual Broadcasting Mode               |
@@ -53,41 +53,61 @@ use std::io::{Read, Seek, Write};
 use crate::v3::common::{Color, Waveform};
 use crate::v3::notifications::*;
 
-/// ## Command 0x01 - Pair pawprint
-/// Tells the device to search for and pair with a nearby pawprint.
+/// ## Command 0x01 - Pair Accessory
+/// Tells the device to search for and pair with a nearby accessory.
 ///
-/// Once the coyote finds and pairs with the pawprint, it will respond with an [0x02 - Pawprint Paired] notification.
-/// If a pawprint is not found within 10 seconds, the coyote will stop searching and respond with an [0x03 - No Pawprint Found] notification.
+/// It will scan for any device whose name starts with "47L12".
+/// Once the coyote finds and pairs with the accessory, it will respond with an [0x02 - Accessory Paired] notification.
+/// If an accessory is not found within 15 seconds, the coyote will stop searching and respond with an [0x03 - No Accessory Found] notification.
+/// Sending the command again restarts the timer.
+/// Cannot be run while gameplay is active (responds with an [0xE0 - Error] notification, code `0x03`).
 ///
 /// ### Payload
 /// This command has no payload.
 ///
 /// ### Responses
-/// - [0x02 - Pawprint Paired]: Pawprint successfully paired.
-/// - [0x03 - No Pawprint Found]: Pawprint pairing timed out.
+/// - [0x02 - Accessory Paired]: Accessory successfully paired.
+/// - [0x03 - No Accessory Found]: Accessory pairing timed out or no slot available.
+/// - [0x04 - Accessory Already Paired]: The accessory is already paired.
+/// - [0xE0 - Error] - Code `0x03`: Cannot pair while gameplay is active.
 ///
-/// [0x02 - Pawprint Paired]: Notification02PawprintPaired
-/// [0x03 - No Pawprint Found]: Notification03NoPawprintFound
+/// [0x02 - Accessory Paired]: Notification02AccessoryPaired
+/// [0x03 - No Accessory Found]: Notification03NoAccessoryFound
+/// [0x04 - Accessory Already Paired]: Notification04AccessoryAlreadyPaired
+/// [0xE0 - Error]: NotificationE0Error
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
-pub struct Command01PairPawprint {}
+pub struct Command01PairAccessory {}
 
-/// ## Command 0x08 - Unpair Pawprint
-/// Tells the device to unpair with a pawprint.
+/// ## Command 0x08 - Unpair Accessory
+/// Tells the device to unpair with an accessory.
+/// 
+/// If the accessory is online, it is sent an empty [0x50 - Unknown] message and disconnected with HCI error code 0x13 Remote User Terminated Connection. This disconnect does not produce a [0x0F - Accessory State Change] notification.
 ///
 /// ### Payload
-/// The pawprint number to unpair. Each pawprint is assigned a number based on the order they were paired with the device, starting at 1.
+/// 
+/// | Offset | Type | Description      |
+/// |--------|------|------------------|
+/// | 0      | u8   | Accessory number |
+///
+/// The accessory number to unpair.
 ///
 /// ### Examples
 /// - `08 01` - Unpair pawprint 1
 /// - `08 02` - Unpair pawprint 2
 ///
 /// ### Response
-/// The device will respond with a [0x09 - Pawprint Unpaired] notification.
+/// - [0x09 - Accessory Unpaired]: Accessory successfully unpaired.
+/// - [0xE0 - Error] - Code `0x02`: Invalid accessory number (must be 1-6).
+/// - [0xE0 - Error] - Code `0x03`: Cannot unpair while gameplay is active.
+/// - [0xE0 - Error] - Code `0x04`: Accessory number is not paired.
 ///
-/// [0x09 - Pawprint Unpaired]: Notification09PawprintUnpaired
+/// [0x09 - Accessory Unpaired]: Notification09AccessoryUnpaired
+/// [0x0F - Accessory State Change]: Notification0FAccessoryStateChange
+/// [0x50 - Unknown]: crate::pawprint::commands::Command50Unknown
+/// [0xE0 - Error]: NotificationE0Error
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
-pub struct Command08UnpairPawprint {
-    pub pawprint_number: u8,
+pub struct Command08UnpairAccessory {
+    pub accessory_number: u8,
 }
 
 /// ## Command 0x0C - Unknown
@@ -161,10 +181,10 @@ pub enum Command0EManualBroadcastingMode {
 /// This command has no payload.
 ///
 /// ## Response
-/// The device will respond with a [0x10 - Accessory Gameplay Response] notification. You may also receive [0x0F - Pawprint Connected] notifications for connected pawprints.
+/// The device will respond with a [0x10 - Accessory Gameplay Response] notification. You may also receive [0x0F - Accessory State Change] notifications for connected pawprints.
 ///
 /// [0x10 - Accessory Gameplay Response]: Notification10AccessoryGameplayResponse
-/// [0x0F - Pawprint Connected]: Notification0FPawprintConnected
+/// [0x0F - Accessory State Change]: Notification0FAccessoryStateChange
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, DekuRead, DekuWrite)]
 pub struct Command11StartAccessoryGameplay {}
 
@@ -1214,9 +1234,9 @@ pub struct UnknownCommand {
 #[deku(id_type = "u8")]
 pub enum Command {
     #[deku(id = "0x01")]
-    PairPawprint(Command01PairPawprint),
+    PairAccessory(Command01PairAccessory),
     #[deku(id = "0x08")]
-    UnpairPawprint(Command08UnpairPawprint),
+    UnpairAccessory(Command08UnpairAccessory),
     #[deku(id = "0x0C")]
     Unknown0C(Command0CUnknown),
     #[deku(id = "0x0D")]
@@ -1292,7 +1312,7 @@ mod tests {
         let data = vec![0x01];
         let ((rest, _), command) = Command::from_bytes((data.as_ref(), 0)).unwrap();
         assert_eq!(rest, &b""[..]);
-        assert_eq!(command, Command::PairPawprint(Command01PairPawprint {}));
+        assert_eq!(command, Command::PairAccessory(Command01PairAccessory {}));
     }
 
     #[test]
